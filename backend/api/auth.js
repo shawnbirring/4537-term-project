@@ -1,6 +1,5 @@
 const express = require('express');
 const session = require('express-session');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
@@ -11,17 +10,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(cookieParser());
-// app.use(session({
-//     secret: 'secret',
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: {
-//         secure: false,
-//         httpOnly: true,
-//         maxAge: 3600000
-//     }
-// }));
 
 
 const validateRegisterInput = [
@@ -34,7 +22,7 @@ const validateLoginInput = [
     body('password').notEmpty(),
 ]
 
-app.get("/api/auth", (_, res) => {
+app.get("/api/auth/check", (_, res) => {
     res.status(200).json({ message: "API is up and running on /api/auth" });
 });
 
