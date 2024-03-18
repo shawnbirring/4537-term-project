@@ -1,5 +1,4 @@
 const express = require('express');
-const session = require('express-session');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
@@ -22,11 +21,11 @@ const validateLoginInput = [
     body('password').notEmpty(),
 ]
 
-app.get("/api/auth/check", (_, res) => {
-    res.status(200).json({ message: "API is up and running on /api/auth" });
+app.get("/check", (_, res) => {
+    res.status(200).json({ message: "API is up and running on!!!" });
 });
 
-app.post('/api/auth/register', validateRegisterInput, async (req, res) => {
+app.post('/register', validateRegisterInput, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -47,7 +46,7 @@ app.post('/api/auth/register', validateRegisterInput, async (req, res) => {
     }
 });
 
-app.post("/api/auth/login", validateLoginInput, async (req, res) => {
+app.post("/login", validateLoginInput, async (req, res) => {
     const errors = validateLoginInput(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -70,7 +69,7 @@ app.post("/api/auth/login", validateLoginInput, async (req, res) => {
     }
 })
 
-// app.get("/api/auth/admin", async (req, res) => {
+// app.get("/admin", async (req, res) => {
 //     try {
 //         const isAdmin = await prisma.user.findFirst({
 //             where: {
@@ -87,7 +86,7 @@ app.post("/api/auth/login", validateLoginInput, async (req, res) => {
 //     }
 // })
 
-// app.get('/api/auth/user', async (req, res) => {
+// app.get('/user', async (req, res) => {
 //     try {
 //         const user = await prisma.user.findUnique({
 //             where: { id: req.session.userId }
@@ -99,7 +98,7 @@ app.post("/api/auth/login", validateLoginInput, async (req, res) => {
 //     }
 // });
 
-// app.get('/api/auth/logout', async (req, res) => {
+// app.get('/logout', async (req, res) => {
 //     try {
 //         req.session.destroy((err) => {
 //             if (err) {
