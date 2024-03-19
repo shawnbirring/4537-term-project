@@ -41,7 +41,7 @@ const JWTMiddleware = async (req, res, next) => {
         next();
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while authenticating user' });
+        res.status(500).json({ error: `An error occurred while authenticating user: ${error}` });
     }
 }
 
@@ -68,7 +68,7 @@ app.post('/register', validateRegisterInput, async (req, res) => {
         res.status(201).json({ message: "User created successfully", token });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: `An error occurred while creating user: ${email}` });
+        res.status(500).json({ message: `An error occurred while registering user: ${error}` });
     }
 });
 
@@ -92,7 +92,7 @@ app.post("/login", validateLoginInput, async (req, res) => {
         res.status(200).json({ message: "Login Successful", token });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "An error occurred while logging in" });
+        res.status(500).json({ error: `An error occurred while logging in: ${error}` });
     }
 })
 
@@ -110,7 +110,7 @@ app.get("/admin", JWTMiddleware, async (req, res) => {
         res.status(200).json({ message: 'Admin page', apiCalls: isAdmin.apiCalls });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while accessing admin page' });
+        res.status(500).json({ error: `An error occurred while accessing admin page: ${error}` });
     }
 });
 
@@ -122,7 +122,7 @@ app.get('/user', JWTMiddleware, async (req, res) => {
         res.status(200).json({ message: 'User landing page', apiCalls: user.apiCalls });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while accessing user page' });
+        res.status(500).json({ error: `An error occurred while accessing user page ${error}` });
     }
 });
 
