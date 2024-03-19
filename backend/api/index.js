@@ -67,6 +67,7 @@ app.post('/register', validateRegisterInput, async (req, res) => {
         const token = createToken(newUser);
         res.status(201).json({ message: "User created successfully", token });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: `An error occurred while creating user: ${email}` });
     }
 });
@@ -90,6 +91,7 @@ app.post("/login", validateLoginInput, async (req, res) => {
         const token = createToken(user);
         res.status(200).json({ message: "Login Successful", token });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: "An error occurred while logging in" });
     }
 })
@@ -107,6 +109,7 @@ app.get("/admin", JWTMiddleware, async (req, res) => {
         }
         res.status(200).json({ message: 'Admin page', apiCalls: isAdmin.apiCalls });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'An error occurred while accessing admin page' });
     }
 });
