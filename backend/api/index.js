@@ -68,7 +68,7 @@ app.post('/register', validateRegisterInput, async (req, res) => {
         res.status(201).json({ message: "User created successfully", token });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: `An error occurred while registering user: ${error}` });
+        res.status(500).json({ error: `An error occurred while registering user: ${error}` });
     }
 });
 
