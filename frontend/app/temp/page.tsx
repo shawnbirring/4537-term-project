@@ -1,4 +1,5 @@
 "use client"
+import { redirectClient } from "@/app/lib/actions";
 import { useState } from 'react';
 
 export default function Page() {
@@ -41,6 +42,7 @@ export default function Page() {
             console.log(data);
             alert(data.message);
             localStorage.setItem('token', data.token); // Store token in localStorage
+            redirectClient("/landing")
         } catch (error) {
             console.error('Error:', error);
         }
