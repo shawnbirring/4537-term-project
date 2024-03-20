@@ -42,7 +42,7 @@ export default function Page() {
             console.log(data);
             alert(data.message);
             localStorage.setItem('token', data.token); // Store token in localStorage
-            redirectClient("/landing")
+            redirectClient("/landing/user")
         } catch (error) {
             console.error('Error:', error);
         }
