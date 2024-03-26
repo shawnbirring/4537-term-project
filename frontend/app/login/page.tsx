@@ -36,13 +36,13 @@ export default function Page() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({ email: loginEmail, password: loginPassword })
             });
             const data = await response.json();
             console.log(data);
             alert(data.message);
-            localStorage.setItem('token', data.token); // Store token in localStorage
-            redirectClient("/landing/user")
+            //redirectClient("/landing/user")
         } catch (error) {
             console.error('Error:', error);
         }

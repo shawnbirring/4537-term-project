@@ -12,13 +12,10 @@ export function Landing({admin} : {admin:boolean}) {
     },
     [userData])
 
-    const token = localStorage.getItem("token")
-    if (!token) {
-        toLogin()
-        return
-    }
-
-    if (!userData) { loadUserData(token, admin).then((res) => {setUserData(res)}) }
+    if (!userData) {loadUserData(admin).then(data => {
+        console.log(data)
+        // setUserData(data)
+    })}
 
     return (
         <>
@@ -26,4 +23,4 @@ export function Landing({admin} : {admin:boolean}) {
             {userData && <div>Number of API Calls Remaining: {userData.apiCalls}</div>}
         </>
     )
-}
+} 

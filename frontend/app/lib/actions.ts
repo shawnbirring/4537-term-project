@@ -6,5 +6,5 @@ export async function redirectClient(path: string) {
 }
 
 export async function toLogin() {
-    redirect("/temp")
+    redirect("/login")
 }
