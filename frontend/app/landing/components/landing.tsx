@@ -5,6 +5,12 @@ import { loadUserData } from "@/app/lib/util"
 
 export function Landing({admin} : {admin:boolean}) {
     const [userData, setUserData] = useState<any>(null)
+    useEffect(() => {
+        if (userData && userData.error) {
+            toLogin()
+        }
+    },
+    [userData])
 
     const token = localStorage.getItem("token")
     if (!token) {
@@ -13,13 +19,6 @@ export function Landing({admin} : {admin:boolean}) {
     }
 
     if (!userData) { loadUserData(token, admin).then((res) => {setUserData(res)}) }
-
-    useEffect(() => {
-        if (userData && userData.error) {
-            toLogin()
-        }
-    },
-    [userData])
 
     return (
         <>
