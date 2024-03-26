@@ -1,15 +1,21 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    origin: true,
+    credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
 
 const validateRegisterInput = [
@@ -24,8 +30,22 @@ const validateLoginInput = [
 
 const JWT_KEY = process.env.TOKEN
 
+const sendTokenResponse = (user, statusCode, res) => {
+    const token = jwt.sign({ id: user.id }, JWT_KEY, { expiresIn: '1h' });
+
+    const cookieOptions = {
+        expires: new Date(Date.now() + 3600000), // 1 hour
+        httpOnly: true,
+    };
+
+    res.cookie('token', token, cookieOptions);
+
+    res.status(statusCode).json({ message: "Success" });
+};
+
+
 const JWTMiddleware = async (req, res, next) => {
-    const token = req.headers.authorization;
+    const token = req.cookies.token;
 
     if (!token) {
         return res.status(401).json({ error: 'Unauthorized' });
@@ -45,10 +65,6 @@ const JWTMiddleware = async (req, res, next) => {
     }
 }
 
-const createToken = (user) => {
-    return jwt.sign({ id: user.id }, JWT_KEY, { expiresIn: '1h' });
-}
-
 app.post('/register', validateRegisterInput, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -64,8 +80,7 @@ app.post('/register', validateRegisterInput, async (req, res) => {
                 password: hashedPassword
             }
         });
-        const token = createToken(newUser);
-        res.status(201).json({ message: "User created successfully", token });
+        sendTokenResponse(newUser, 201, res);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: `An error occurred while registering user: ${error}` });
@@ -88,8 +103,7 @@ app.post("/login", validateLoginInput, async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ error: "Invalid email or password" });
         }
-        const token = createToken(user);
-        res.status(200).json({ message: "Login Successful", token });
+        sendTokenResponse(user, 200, res);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: `An error occurred while logging in: ${error}` });
