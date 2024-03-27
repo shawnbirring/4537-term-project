@@ -5,6 +5,7 @@ const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+require('dotenv').config();
 const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
 
 const prisma = new PrismaClient();
@@ -127,7 +128,7 @@ app.post('/api', JWTMiddleware, async (req, res) => {
             where: { id: req.user.id },
             data: { apiCalls: { decrement: 1 } }
         });
-        const modelResponse = await fetch('https://api-inference.huggingface.co/models/gpt2', {
+        const modelResponse = await fetch('https://api-inference.huggingface.co/models/Phind/Phind-CodeLlama-34B-v2', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${HUGGING_FACE_MODEL_TOKEN}`,
@@ -135,9 +136,6 @@ app.post('/api', JWTMiddleware, async (req, res) => {
             },
             body: JSON.stringify({ query: "Can you provide documentation for the following code", code: codeBlock, language: programmingLanguage })
         });
-        if (!modelResponse.ok) {
-            throw new Error(`Model request failed with status: ${modelResponse.status}`);
-        }
 
         const modelData = await modelResponse.json();
 
