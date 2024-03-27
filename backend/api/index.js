@@ -115,7 +115,7 @@ app.post("/login", validateLoginInput, async (req, res) => {
     }
 })
 
-app.post('/', JWTMiddleware, async (req, res) => {
+app.post('/api', JWTMiddleware, async (req, res) => {
     const { codeBlock, programmingLanguage } = req.body;
     try {
         const user = await prisma.user.findUnique({ where: { id: req.user.id } });
