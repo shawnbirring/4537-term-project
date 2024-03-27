@@ -42,7 +42,7 @@ export default function Page() {
             const data = await response.json();
             console.log(data);
             alert(data.message);
-            //redirectClient("/landing/user")
+            redirectClient("/landing/user")
         } catch (error) {
             console.error('Error:', error);
         }

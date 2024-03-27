@@ -14,7 +14,7 @@ export function Landing({admin} : {admin:boolean}) {
 
     if (!userData) {loadUserData(admin).then(data => {
         console.log(data)
-        // setUserData(data)
+        setUserData(data)
     })}
 
     return (
