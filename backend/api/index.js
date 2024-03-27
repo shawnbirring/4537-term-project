@@ -132,11 +132,9 @@ app.post('/api', JWTMiddleware, async (req, res) => {
         const modelResponse = await fetch('https://api-inference.huggingface.co/models/gpt2', {
 
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${HUGGING_FACE_MODEL_TOKEN}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ query: "Can you provide documentation for the following code", code: codeBlock, language: programmingLanguage })
+            headers: { 'Authorization': `Bearer ${HUGGING_FACE_MODEL_TOKEN}`, },
+            // body: JSON.stringify({ query: "Can you provide documentation for the following code", code: codeBlock, language: programmingLanguage })
+            body: JSON.stringify("query: Can you provide documentation for the following code, code: " + codeBlock + ", language: " + programmingLanguage)
         });
 
         const modelData = await modelResponse.json();

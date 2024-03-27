@@ -1,0 +1,1 @@
+console.log(JSON.stringify("query: Can you provide documentation for the following code, code: " + "print('hello world')" + ", language: " + "python"))
