@@ -115,39 +115,39 @@ app.post("/login", validateLoginInput, async (req, res) => {
     }
 })
 
-app.post('/api', JWTMiddleware, async (req, res) => {
-    const { codeBlock, programmingLanguage } = req.body;
-    try {
-        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        await prisma.user.update({
-            where: { id: req.user.id },
-            data: { apiCalls: { decrement: 1 } }
-        });
-        const modelResponse = await fetch('https://api-inference.huggingface.co/models/Phind/Phind-CodeLlama-34B-v2', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${HUGGING_FACE_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ query: "Can you provide documentation for the following code", code: codeBlock, language: programmingLanguage })
-        });
-        if (!modelResponse.ok) {
-            throw new Error(`Model request failed with status: ${modelResponse.status}`);
-        }
+// app.post('/', JWTMiddleware, async (req, res) => {
+//     const { codeBlock, programmingLanguage } = req.body;
+//     try {
+//         const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+//         if (!user) {
+//             return res.status(404).json({ error: 'User not found' });
+//         }
+//         await prisma.user.update({
+//             where: { id: req.user.id },
+//             data: { apiCalls: { decrement: 1 } }
+//         });
+//         const modelResponse = await fetch('https://api-inference.huggingface.co/models/Phind/Phind-CodeLlama-34B-v2', {
+//             method: 'POST',
+//             headers: {
+//                 'Authorization': `Bearer ${HUGGING_FACE_API_KEY}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ query: "Can you provide documentation for the following code", code: codeBlock, language: programmingLanguage })
+//         });
+//         if (!modelResponse.ok) {
+//             throw new Error(`Model request failed with status: ${modelResponse.status}`);
+//         }
 
-        const modelData = await modelResponse.json();
+//         const modelData = await modelResponse.json();
 
-        const documentation = modelData.generated_text || "Documentation could not be generated.";
+//         const documentation = modelData.generated_text || "Documentation could not be generated.";
 
-        res.status(200).json({ message: 'API response', documentation: documentation });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: `An error occurred while accessing API: ${error}` });
-    }
-});
+//         res.status(200).json({ message: 'API response', documentation: documentation });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: `An error occurred while accessing API: ${error}` });
+//     }
+// });
 
 app.get("/admin", JWTMiddleware, async (req, res) => {
     try {
