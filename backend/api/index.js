@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 const app = express();
 
 const corsOptions = {
-    origin: '*',
+    origin: 'https://4537-term-project-frontend.vercel.app/',
     credentials: true,
     optionsSuccessStatus: 200
 };
