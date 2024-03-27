@@ -129,7 +129,7 @@ app.post('/api', JWTMiddleware, async (req, res) => {
         const modelResponse = await fetch('https://api-inference.huggingface.co/models/Phind/Phind-CodeLlama-34B-v2', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${HUGGING_FACE_API_KEY}`,
+                'Authorization': `Bearer ${HUGGING_FACE_MODEL_TOKEN}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ query: "Can you provide documentation for the following code", code: codeBlock, language: programmingLanguage })
