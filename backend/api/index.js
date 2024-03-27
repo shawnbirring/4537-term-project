@@ -139,9 +139,7 @@ app.post('/api', JWTMiddleware, async (req, res) => {
 
         const modelData = await modelResponse.json();
 
-        const documentation = modelData.generated_text || "Documentation could not be generated.";
-
-        res.status(200).json({ message: 'API response', documentation: documentation });
+        res.status(200).json({ message: 'API response', modelData });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: `An error occurred while accessing API: ${error}` });
