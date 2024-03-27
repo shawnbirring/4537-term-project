@@ -10,9 +10,11 @@ const prisma = new PrismaClient();
 const app = express();
 
 const corsOptions = {
-    origin: true,
+    origin: 'https://4537-term-project-frontend.vercel.app',
     credentials: true,
+    optionsSuccessStatus: 200
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
@@ -36,6 +38,8 @@ const sendTokenResponse = (user, statusCode, res) => {
     const cookieOptions = {
         expires: new Date(Date.now() + 3600000), // 1 hour
         httpOnly: true,
+        sameSite: 'None',
+        secure: true,
     };
 
     res.cookie('token', token, cookieOptions);
