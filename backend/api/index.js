@@ -127,7 +127,7 @@ app.post('/api', JWTMiddleware, async (req, res) => {
             where: { id: req.user.id },
             data: { apiCalls: { decrement: 1 } }
         });
-        const modelResponse = await fetch('https://api-inference.huggingface.co/models/Phind/Phind-CodeLlama-34B-v2', {
+        const modelResponse = await fetch('https://api-inference.huggingface.co/models/gpt2', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${HUGGING_FACE_MODEL_TOKEN}`,
