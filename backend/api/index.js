@@ -118,7 +118,8 @@ app.post("/login", validateLoginInput, async (req, res) => {
 })
 
 app.post('/api', JWTMiddleware, async (req, res) => {
-    const { codeBlock, programmingLanguage } = req.body;
+    // const { codeBlock, programmingLanguage } = req.body;
+    const data = req.body;
     try {
         const user = await prisma.user.findUnique({ where: { id: req.user.id } });
         if (!user) {
@@ -134,13 +135,13 @@ app.post('/api', JWTMiddleware, async (req, res) => {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${HUGGING_FACE_MODEL_TOKEN}`, },
             // body: JSON.stringify({ query: "Can you provide documentation for the following code", code: codeBlock, language: programmingLanguage })
-            body: JSON.stringify("query: Can you provide documentation for the following code, code: " + codeBlock + ", language: " + programmingLanguage)
+            // body: JSON.stringify("query: Can you provide documentation for the following code, code: " + codeBlock + ", language: " + programmingLanguage)
+            body: JSON.stringify(data)
         });
 
         const modelData = await modelResponse.json();
-        const generatedText = modelData[0].generated_text;
 
-        res.status(200).json({ message: 'API response', generatedText });
+        res.status(200).json({ message: 'API response', modelData });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: `An error occurred while accessing API: ${error}` });
