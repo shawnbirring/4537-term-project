@@ -138,8 +138,9 @@ app.post('/api', JWTMiddleware, async (req, res) => {
         });
 
         const modelData = await modelResponse.json();
+        const generatedText = modelData[0].generated_text;
 
-        res.status(200).json({ message: 'API response', modelData });
+        res.status(200).json({ message: 'API response', generatedText });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: `An error occurred while accessing API: ${error}` });
