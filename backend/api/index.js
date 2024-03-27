@@ -11,10 +11,11 @@ const prisma = new PrismaClient();
 const app = express();
 
 const corsOptions = {
-    origin: 'https://4537-term-project-frontend.vercel.app',
+    origin: '*',
     credentials: true,
     optionsSuccessStatus: 200
 };
+
 
 app.use(cors(corsOptions));
 app.use(express.json());
