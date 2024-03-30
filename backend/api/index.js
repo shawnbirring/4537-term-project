@@ -5,15 +5,18 @@ const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+require('dotenv').config();
+const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
 
 const prisma = new PrismaClient();
 const app = express();
 
 const corsOptions = {
-    origin: 'https://4537-term-project-frontend.vercel.app',
+    origin: 'https://4537-term-project-frontend.vercel.app/',
     credentials: true,
     optionsSuccessStatus: 200
 };
+
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -114,6 +117,37 @@ app.post("/login", validateLoginInput, async (req, res) => {
     }
 })
 
+app.post('/api', JWTMiddleware, async (req, res) => {
+    // const { codeBlock, programmingLanguage } = req.body;
+    const data = req.body;
+    try {
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        await prisma.user.update({
+            where: { id: req.user.id },
+            data: { apiCalls: { decrement: 1 } }
+        });
+        // const modelResponse = await fetch('https://api-inference.huggingface.co/models/Phind/Phind-CodeLlama-34B-v2', {
+        const modelResponse = await fetch('https://api-inference.huggingface.co/models/gpt2', {
+
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${HUGGING_FACE_MODEL_TOKEN}`, },
+            // body: JSON.stringify({ query: "Can you provide documentation for the following code", code: codeBlock, language: programmingLanguage })
+            // body: JSON.stringify("query: Can you provide documentation for the following code, code: " + codeBlock + ", language: " + programmingLanguage)
+            body: JSON.stringify(data)
+        });
+
+        const modelData = await modelResponse.json();
+
+        res.status(200).json({ message: 'API response', modelData });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: `An error occurred while accessing API: ${error}` });
+    }
+});
+
 app.get("/admin", JWTMiddleware, async (req, res) => {
     try {
         const isAdmin = await prisma.user.findFirst({
@@ -142,6 +176,30 @@ app.get('/user', JWTMiddleware, async (req, res) => {
         console.error(error);
         res.status(500).json({ error: `An error occurred while accessing user page ${error}` });
     }
+});
+
+app.get('/users', JWTMiddleware, async (req, res) => {
+    try {
+        const isAdmin = await prisma.user.findFirst({
+            where: {
+                id: req.user.id,
+                isAdmin: true
+            }
+        });
+        if (!isAdmin) {
+            return res.status(403).json({ error: 'Forbidden' });
+        }
+        const users = await prisma.user.findMany();
+        res.status(200).json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: `An error occurred while accessing users: ${error}` });
+    }
+});
+
+app.get('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logged out' });
 });
 
 const PORT = process.env.PORT || 3000;
