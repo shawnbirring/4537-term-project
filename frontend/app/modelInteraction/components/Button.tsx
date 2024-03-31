@@ -9,11 +9,7 @@ interface ButtonProps{
 
 async function sendquestion(question : string, setStateFun : Function){
     try {
-        // const token = localStorage.getItem('token');
-        // if (!token) {
-        //     alert('Token not found. Please login first.');
-        //     return;
-        // }
+        console.log("setting post request")
         const response = await fetch('https://4537-term-project-backend.vercel.app/api', {
             method: 'POST',
             headers: {
@@ -24,9 +20,13 @@ async function sendquestion(question : string, setStateFun : Function){
             }),
             credentials: 'include'
         });
+        console.log("sending post request")
         const data = await response.json();
-        console.log("AI Response: " + data)
-        setStateFun(data)
+        console.log(data.modelData[0].generated_text)
+        let response_split_newline = data.modelData[0].generated_text.split("\n\n\n")
+        console.log(response_split_newline)
+        console.log(response_split_newline[1])
+        setStateFun(response_split_newline[1])
     } catch (error) {
         console.error('Error: ', error);
     }
