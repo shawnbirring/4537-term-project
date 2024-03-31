@@ -7,7 +7,7 @@ import Button from "./components/Button";
 import TextArea from "./components/TextArea";
 import Title from "./components/Title";
 
-export default function ModelInteraction({admin} : {admin:boolean}) {
+export default function ModelInteraction() {
 
     const [question, setQuestion] = useState("")
     const [response, setResponse] = useState("")
