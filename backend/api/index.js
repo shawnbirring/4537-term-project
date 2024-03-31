@@ -13,7 +13,14 @@ const prisma = new PrismaClient();
 const app = express();
 
 const corsOptions = {
-  origin: "https://4537-term-project-frontend.vercel.app/",
+  origin: function (origin, callback) {
+    const allowedOrigins = ["https://4537-term-project-frontend.vercel.app"];
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS policy violation"));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200,
 };
