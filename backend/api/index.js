@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const { TextGenerationPipeline } = require("../model/TextGenerationPipeline");
 require("dotenv").config();
-const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
+// const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
 
 const prisma = new PrismaClient();
 const app = express();
@@ -121,7 +121,7 @@ app.post("/login", validateLoginInput, async (req, res) => {
   }
 });
 
-app.post("/api", async (req, res) => {
+app.post("/api", JWTMiddleware, async (req, res) => {
   // const { codeBlock, programmingLanguage } = req.body;
   const { text } = req.body;
   try {
