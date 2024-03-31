@@ -72,6 +72,8 @@ const JWTMiddleware = async (req, res, next) => {
   }
 };
 
+app.options('/register', cors(corsOptions));
+
 app.post("/register", validateRegisterInput, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
