@@ -12,34 +12,13 @@ require("dotenv").config();
 const prisma = new PrismaClient();
 const app = express();
 
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     const allowedOrigins = ["https://4537-term-project-frontend.vercel.app", "http://localhost:3000"];
-//     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("CORS policy violation"));
-//     }
-//   },
-//   credentials: true,
-//   optionsSuccessStatus: 200,
-// };
-
-var allowlist = [
-  "https://4537-term-project-frontend.vercel.app",
-  "http://localhost:3000",
-];
-var corsOptionsDelegate = function (req, callback) {
-  var corsOptions;
-  if (allowlist.indexOf(req.header("Origin")) !== -1) {
-    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
-  } else {
-    corsOptions = { origin: false }; // disable CORS for this request
-  }
-  callback(null, corsOptions); // callback expects two parameters: error and options
+const corsOptions = {
+  origin: "https://4537-term-project-frontend.vercel.app",
+  credentials: true,
+  optionsSuccessStatus: 200,
 };
 
-app.use(cors(corsOptionsDelegate));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
