@@ -28,7 +28,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-
+app.options("*", cors(corsOptions));
 const validateRegisterInput = [
   body("email").isEmail().normalizeEmail(),
   body("password").isLength({ min: 6 }),
