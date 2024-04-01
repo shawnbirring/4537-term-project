@@ -13,14 +13,7 @@ const prisma = new PrismaClient();
 const app = express();
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = ["https://4537-term-project-frontend.vercel.app", "http://localhost:3000"];
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("CORS policy violation"));
-    }
-  },
+  origin: "https://4537-term-project-frontend.vercel.app",
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -79,7 +72,7 @@ const JWTMiddleware = async (req, res, next) => {
   }
 };
 
-app.options('/register', cors(corsOptions));
+app.options("/register", cors(corsOptions));
 
 app.post("/register", validateRegisterInput, async (req, res) => {
   const errors = validationResult(req);
