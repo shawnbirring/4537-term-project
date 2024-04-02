@@ -43,7 +43,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     httpOnly: true,
     sameSite: "None",
     secure: true,
-    domain: process.env.DOMAIN,
+    // domain: process.env.DOMAIN,
   };
 
   res.cookie("token", token, cookieOptions);
