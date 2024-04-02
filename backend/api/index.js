@@ -13,7 +13,7 @@ const prisma = new PrismaClient();
 const app = express();
 
 const corsOptions = {
-  origin: process.env.origin,
+  origin: process.env.DOMAIN,
   credentials: true,
   optionsSuccessStatus: 200,
 };
