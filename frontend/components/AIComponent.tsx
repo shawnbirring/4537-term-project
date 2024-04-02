@@ -28,8 +28,8 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
             }
 
             const data = await res.json();
-            setResponse(data.modelData);
-            setRemainingCalls(data.remainingCalls);
+            setResponse(data.modelData[0]["generated_text"]);
+            setRemainingCalls(data.apiCalls);
         } catch (error) {
             console.error("Fetching error:", error);
             setError('An error occurred while accessing the API.');
