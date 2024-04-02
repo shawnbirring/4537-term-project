@@ -13,7 +13,7 @@ const prisma = new PrismaClient();
 const app = express();
 
 const corsOptions = {
-  origin: "https://4537-term-project-frontend.vercel.app",
+  origin: process.env.origin,
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -22,9 +22,10 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.options("*", cors(corsOptions));
+
 const validateRegisterInput = [
   body("email").isEmail().normalizeEmail(),
-  body("password").isLength({ min: 6 }),
+  body("password").isLength({ min: 3 }),
 ];
 
 const validateLoginInput = [
@@ -42,6 +43,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     httpOnly: true,
     sameSite: "None",
     secure: true,
+    domain: process.env.DOMAIN,
   };
 
   res.cookie("token", token, cookieOptions);
@@ -50,6 +52,8 @@ const sendTokenResponse = (user, statusCode, res) => {
 };
 
 const JWTMiddleware = async (req, res, next) => {
+  console.log(req.cookies.token);
+
   const token = req.cookies.token;
 
   if (!token) {
@@ -71,8 +75,6 @@ const JWTMiddleware = async (req, res, next) => {
       .json({ error: `An error occurred while authenticating user: ${error}` });
   }
 };
-
-app.options("/register", cors(corsOptions));
 
 app.post("/register", validateRegisterInput, async (req, res) => {
   const errors = validationResult(req);
@@ -123,7 +125,7 @@ app.post("/login", validateLoginInput, async (req, res) => {
   }
 });
 
-app.post("/api", JWTMiddleware, async (req, res) => {
+app.post("/ai", JWTMiddleware, async (req, res) => {
   // const { codeBlock, programmingLanguage } = req.body;
   const { text } = req.body;
   try {
@@ -145,7 +147,11 @@ app.post("/api", JWTMiddleware, async (req, res) => {
       do_sample: false,
       return_full_text: false,
     });
-    res.status(200).json({ message: "API response", modelData: response });
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { apiCalls: { decrement: 1 } },
+    });
+    res.status(200).json({ message: "API response", modelData: response, apiCalls: updatedUser.apiCalls });
   } catch (error) {
     console.error(error);
     res
@@ -210,6 +216,31 @@ app.get("/users", JWTMiddleware, async (req, res) => {
       .json({ error: `An error occurred while accessing users: ${error}` });
   }
 });
+
+app.get("/auth/status", JWTMiddleware, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+    });
+    if (!user) {
+      return res.status(401).json({ isAuthenticated: false });
+    }
+
+    // Determine if the user is an admin and append appropriate data
+    let responseData = { isAuthenticated: true, role: user.isAdmin ? "admin" : "user", email: user.email, apiCalls: user.apiCalls };
+
+    if (user.isAdmin) {
+      const allUsers = await prisma.user.findMany();
+      responseData.adminData = allUsers;
+    }
+
+    res.status(200).json(responseData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: `An error occurred: ${error}` });
+  }
+});
+
 
 app.get("/logout", (req, res) => {
   res.clearCookie("token");
