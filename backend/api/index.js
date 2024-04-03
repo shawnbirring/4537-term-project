@@ -177,42 +177,6 @@ app.post("/ai", JWTMiddleware, async (req, res) => {
   }
 });
 
-app.get("/admin", JWTMiddleware, async (req, res) => {
-  try {
-    const isAdmin = await prisma.user.findFirst({
-      where: {
-        id: req.user.id,
-        isAdmin: true,
-      },
-    });
-    if (!isAdmin) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
-    res.status(200).json({ message: "Admin page", apiCalls: isAdmin.apiCalls });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: `An error occurred while accessing admin page: ${error}`,
-    });
-  }
-});
-
-app.get("/user", JWTMiddleware, async (req, res) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
-    });
-    res
-      .status(200)
-      .json({ message: "User landing page", apiCalls: user.apiCalls });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: `An error occurred while accessing user page ${error}` });
-  }
-});
-
 app.get("/users", JWTMiddleware, async (req, res) => {
   try {
     const isAdmin = await prisma.user.findFirst({
