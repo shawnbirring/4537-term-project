@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import SignoutButton from "@/components/SignoutButtton";
 
 export const metadata: Metadata = {
   title: "4537 Term Project",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SignoutButton/>
+        {children}
+      </body>
     </html>
   );
 }
