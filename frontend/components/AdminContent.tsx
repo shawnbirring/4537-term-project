@@ -1,6 +1,7 @@
 import TypeAnimation from '@/components/TypeAnimation';
 import AIComponent from '@/components/AIComponent';
 import { User } from '@/models/User';
+import { useRouter } from 'next/navigation';
 
 interface AdminComponentProps {
     users: User[];
@@ -9,6 +10,8 @@ interface AdminComponentProps {
 }
 
 const AdminComponent: React.FC<AdminComponentProps> = ({ users, adminEmail, apiCalls }) => {
+    const router = useRouter()
+
     return (
         <div className="container mx-auto my-8 p-5 shadow-lg">
             <div className="text-left text-4xl font-bold mb-8">
@@ -33,14 +36,18 @@ const AdminComponent: React.FC<AdminComponentProps> = ({ users, adminEmail, apiC
                             </thead>
                             <tbody>
                                 {users.map((user) => (
-                                    <tr key={user.id}>
-                                        <td className="border px-4 py-2">{user.id}</td>
-                                        <td className="border px-4 py-2">{user.email}</td>
-                                        <td className="border px-4 py-2">{user.password}</td>
-                                        <td className="border px-4 py-2">{user.isAdmin ? 'Yes' : 'No'}</td>
-                                        <td className="border px-4 py-2">{user.apiCalls}</td>
-                                        <td className="border px-4 py-2">{user.createdAt}</td>
-                                    </tr>
+                                    
+                                        <tr 
+                                        key={user.id}
+                                        onClick={(_) => router.push(`/manageUser/${user.id}`)}
+                                        className='hover:bg-gray-100'>
+                                            <td className="border px-4 py-2">{user.id}</td>
+                                            <td className="border px-4 py-2">{user.email}</td>
+                                            <td className="border px-4 py-2">{user.password}</td>
+                                            <td className="border px-4 py-2">{user.isAdmin ? 'Yes' : 'No'}</td>
+                                            <td className="border px-4 py-2">{user.apiCalls}</td>
+                                            <td className="border px-4 py-2">{user.createdAt}</td>
+                                        </tr>
                                 ))}
                             </tbody>
                         </table>

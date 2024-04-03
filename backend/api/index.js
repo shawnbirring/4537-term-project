@@ -241,6 +241,26 @@ app.get("/auth/status", JWTMiddleware, async (req, res) => {
   }
 });
 
+app.get("/userData", JWTMiddleware, async (req, res) => {
+  try {
+    const admin = await prisma.user.findFirst({
+      where: {
+        id: req.user.id,
+        isAdmin: true,
+    }})
+    if (!admin) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    console.log(req)
+    return 
+    // const user = await prisma.user.findFirst({
+    //   where: {id = }
+    // })
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: `An error occurred: ${err}` });
+  }
+})
 
 app.get("/logout", (req, res) => {
   res.clearCookie("token");
