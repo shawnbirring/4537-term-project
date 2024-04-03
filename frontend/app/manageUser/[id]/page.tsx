@@ -43,7 +43,7 @@ export default function Page({ params }: Params) {
             <>
                 {(loading) ?
                     <div className="flex items-center justify-center h-screen text-6xl font-bold">
-                        <TypeAnimation sequence={['Loading...']} wrapper="p" repeat={Infinity} />
+                        <TypeAnimation sequence={['Loading...']} wrapper="p" />
                     </div> :
                     <form onSubmit={handleSubmit} className="max-w-md mx-auto">
                         <div className="mb-4">

@@ -1,4 +1,3 @@
-"use client";
 import TypeAnimation from '@/components/TypeAnimation';
 import AIComponent from '@/components/AIComponent';
 import { User } from '@/models/User';
@@ -37,11 +36,11 @@ const AdminComponent: React.FC<AdminComponentProps> = ({ initialUsers, adminEmai
                     <div className="overflow-x-auto">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-bold">Users</h2>
-                            <button onClick={callFetchUsers} className="text-white bg-blue-500 hover:bg-blue-700 text-sm font-semibold py-2 px-4 rounded">Refresh</button>
+                            <button onClick={callFetchUsers} className="text-white bg-blue-500 hover:bg-blue-700 text-sm font-semibold py-2 px-4 rounded" disabled={loading}>Refresh</button>
                         </div>
                         <p className="mb-4 text-sm text-gray-500">Click on a row to manage the corresponding user.</p>
                         {
-                            loading ? <TypeAnimation sequence={['Loading...']} wrapper="p" repeat={Infinity} /> : <table className="min-w-full table-auto">
+                            loading ? <TypeAnimation sequence={['Loading...']} wrapper="p" /> : <table className="min-w-full table-auto">
                                 <thead className="bg-gray-200">
                                     <tr>
                                         <th className="px-4 py-2">ID</th>
