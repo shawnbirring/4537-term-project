@@ -76,6 +76,19 @@ const JWTMiddleware = async (req, res, next) => {
   }
 };
 
+async function incrementApiUsage(requestType) {
+  const fieldToUpdate = `${requestType.toLowerCase()}Total`;
+
+  await prisma.apiUsage.update({
+    where: { id: 1 },
+    data: {
+      [fieldToUpdate]: {
+        increment: 1
+      }
+    }
+  });
+}
+
 app.post("/register", validateRegisterInput, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -161,42 +174,6 @@ app.post("/ai", JWTMiddleware, async (req, res) => {
     res
       .status(500)
       .json({ error: `An error occurred while accessing API: ${error}` });
-  }
-});
-
-app.get("/admin", JWTMiddleware, async (req, res) => {
-  try {
-    const isAdmin = await prisma.user.findFirst({
-      where: {
-        id: req.user.id,
-        isAdmin: true,
-      },
-    });
-    if (!isAdmin) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
-    res.status(200).json({ message: "Admin page", apiCalls: isAdmin.apiCalls });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: `An error occurred while accessing admin page: ${error}`,
-    });
-  }
-});
-
-app.get("/user", JWTMiddleware, async (req, res) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
-    });
-    res
-      .status(200)
-      .json({ message: "User landing page", apiCalls: user.apiCalls });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: `An error occurred while accessing user page ${error}` });
   }
 });
 
@@ -292,7 +269,7 @@ app.patch("/userData", JWTMiddleware, async (req, res) => {
       },
     });
     console.log("updated", user);
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true, user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: `An error occurred: ${err}` });

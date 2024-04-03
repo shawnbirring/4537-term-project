@@ -19,7 +19,7 @@ export async function updateUserData(user: User) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({userData: user})
+        body: JSON.stringify({ userData: user })
     })
     return await res.json()
 }
