@@ -292,7 +292,7 @@ app.patch("/userData", JWTMiddleware, async (req, res) => {
       },
     });
     console.log("updated", user);
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true, user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: `An error occurred: ${err}` });

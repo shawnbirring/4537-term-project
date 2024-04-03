@@ -33,7 +33,7 @@ export default function Landing() {
     if (data.role === 'admin') {
         return (
             <AdminComponent
-                users={data.adminData}
+                initialUsers={data.adminData}
                 adminEmail={data.email}
                 apiCalls={data.apiCalls}
             />
