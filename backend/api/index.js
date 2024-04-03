@@ -125,7 +125,7 @@ app.post("/login", validateLoginInput, async (req, res) => {
   }
 });
 
-app.post("/ai", async (req, res) => {
+app.post("/ai", JWTMiddleware, async (req, res) => {
   // const { codeBlock, programmingLanguage } = req.body;
   const { text } = req.body;
   try {
@@ -151,13 +151,11 @@ app.post("/ai", async (req, res) => {
       where: { id: req.user.id },
       data: { apiCalls: { decrement: 1 } },
     });
-    res
-      .status(200)
-      .json({
-        message: "API response",
-        modelData: response,
-        apiCalls: updatedUser.apiCalls,
-      });
+    res.status(200).json({
+      message: "API response",
+      modelData: response,
+      apiCalls: updatedUser.apiCalls,
+    });
   } catch (error) {
     console.error(error);
     res
