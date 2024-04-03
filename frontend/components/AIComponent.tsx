@@ -1,12 +1,14 @@
 "use client";
 import { useState } from 'react';
 import TypeAnimation from "@/components/TypeAnimation"
+import {title_AIInput} from '../lang/en/userfacingstrings'
 
 const AIComponent = ({ initialState }: { initialState: number }) => {
     const [input, setInput] = useState('');
     const [response, setResponse] = useState('');
     const [error, setError] = useState('');
     const [remainingCalls, setRemainingCalls] = useState(initialState);
+    const [loading, setLoading] = useState(false); 
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -14,6 +16,7 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
         setResponse('');
 
         try {
+            setLoading(true)
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai`, {
                 method: 'POST',
                 headers: {
@@ -30,6 +33,7 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
             const data = await res.json();
             setResponse(data.modelData[0]["generated_text"]);
             setRemainingCalls(data.apiCalls);
+            setLoading(false)
         } catch (error) {
             console.error("Fetching error:", error);
             setError('An error occurred while accessing the API.');
@@ -41,7 +45,7 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label htmlFor="aiInput" className="block text-gray-700 text-sm font-bold mb-2">
-                        AI Input
+                        {title_AIInput}
                     </label>
                     <input
                         type="text"
@@ -51,12 +55,12 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
                 </div>
-                <button
+               {!loading && <button
                     type="submit"
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                     Submit
-                </button>
+                </button>} 
             </form>
             {response && (
                 <div className="mt-4">
@@ -64,6 +68,13 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
                     <TypeAnimation sequence={[response]} wrapper="p" />
                 </div>
             )}
+
+            {loading && (
+                <div className="mt-4">
+                    <TypeAnimation className='text-lg font-semibold' sequence={["Loading..."]} wrapper="span" />
+                </div>
+            )}  
+
             {error && (
                 <div className="mt-4 text-red-500">
                     <p>{error}</p>

@@ -2,6 +2,7 @@ import TypeAnimation from '@/components/TypeAnimation';
 import AIComponent from '@/components/AIComponent';
 import { User } from '@/models/User';
 import { useRouter } from 'next/navigation';
+import {landingWelcome, table_heading_ID, table_heading_Email, table_heading_Password, table_heading_isAdmin, table_heading_apiCalls, table_heading_createdAt} from '../lang/en/userfacingstrings'
 
 interface AdminComponentProps {
     users: User[];
@@ -16,7 +17,7 @@ const AdminComponent: React.FC<AdminComponentProps> = ({ users, adminEmail, apiC
         <div className="container mx-auto my-8 p-5 shadow-lg">
             <div className="text-left text-4xl font-bold mb-8">
                 <TypeAnimation
-                    sequence={[`Welcome ${adminEmail}`, 1000]}
+                    sequence={[`${landingWelcome} ${adminEmail}`, 1000]}
                     wrapper="h2"
                 />
             </div>
@@ -26,12 +27,12 @@ const AdminComponent: React.FC<AdminComponentProps> = ({ users, adminEmail, apiC
                         <table className="min-w-full table-auto">
                             <thead className="bg-gray-200">
                                 <tr>
-                                    <th className="px-4 py-2">ID</th>
-                                    <th className="px-4 py-2">Email</th>
-                                    <th className="px-4 py-2">Password</th>
-                                    <th className="px-4 py-2">Is Admin</th>
-                                    <th className="px-4 py-2">API Calls</th>
-                                    <th className="px-4 py-2">Created At</th>
+                                    <th className="px-4 py-2">{table_heading_ID}</th>
+                                    <th className="px-4 py-2">{table_heading_Email}</th>
+                                    <th className="px-4 py-2">{table_heading_Password}</th>
+                                    <th className="px-4 py-2">{table_heading_isAdmin}</th>
+                                    <th className="px-4 py-2">{table_heading_apiCalls}</th>
+                                    <th className="px-4 py-2">{table_heading_createdAt}</th>
                                 </tr>
                             </thead>
                             <tbody>
