@@ -21,3 +21,13 @@ model User {
   apiCalls  Int      @default(20)
   createdAt DateTime @default(now())
 }
+
+model ApiUsage {
+  id          Int      @id @default(autoincrement())
+  getTotal    Int      @default(0)
+  postTotal   Int      @default(0)
+  deleteTotal Int      @default(0)
+  patchTotal  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

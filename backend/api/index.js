@@ -76,6 +76,19 @@ const JWTMiddleware = async (req, res, next) => {
   }
 };
 
+async function incrementApiUsage(requestType) {
+  const fieldToUpdate = `${requestType.toLowerCase()}Total`;
+
+  await prisma.apiUsage.update({
+    where: { id: 1 },
+    data: {
+      [fieldToUpdate]: {
+        increment: 1
+      }
+    }
+  });
+}
+
 app.post("/register", validateRegisterInput, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
