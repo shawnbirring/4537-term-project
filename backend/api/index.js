@@ -328,8 +328,6 @@ const options = {
 
 app.get('/files', (req, res) => {
   // Read the contents of the directory
-  const dir = path.resolve(process.cwd(), "utils")
-  const pathname = path.join(dir, "apidocs.yaml")
   fs.readdir('./backend/utils', (err, files) => {
     if (err) {
       console.error('Error reading directory:', err);
@@ -342,9 +340,7 @@ app.get('/files', (req, res) => {
 });
 
 try {
-  const dir = path.resolve(process.cwd(), "utils")
-  const pathname = path.join(dir, "apidocs.yaml")
-  const yamlfile = fs.readFileSync(pathname, 'utf-8')
+  const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
   const swaggerDoc = yaml.parse(yamlfile)
 
   app.use(
