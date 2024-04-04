@@ -339,7 +339,7 @@ app.get('/files', (req, res) => {
   });
 });
 
-// const yamlfile = fs.readFileSync('./backend/apidocs.yaml', 'utf-8')
+// const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
 // const swaggerDoc = yaml.parse(yamlfile)
 
 // app.use(
