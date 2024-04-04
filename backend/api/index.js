@@ -321,7 +321,7 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.yaml"],
+  apis: ["./routes/apidocs.yaml"],
 };
 
 const specs = swagger(options)
