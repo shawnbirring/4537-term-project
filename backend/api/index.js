@@ -7,8 +7,13 @@ const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const { TextGenerationPipeline } = require("../model/TextGenerationPipeline");
 require("dotenv").config();
+const swagger = require('swagger-jsdoc')
+const swaggerUI = require('swagger-ui-express')
+const yaml = require('yaml')
+const fs = require('fs')
 // const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
 
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 const prisma = new PrismaClient();
 const app = express();
 
@@ -332,6 +337,46 @@ app.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out" });
 });
+
+
+const options = {
+  definition: {
+    openapi: "3.1.0",
+    info: {
+      title: "Law AI",
+      version: "1.0",
+      description:
+        "API that supports the Law AI application.",
+    },
+    servers: [
+      {
+        url: process.env.DOMAIN,
+      },
+    ],
+  }
+};
+
+app.get('/files', (req, res) => {
+  // Read the contents of the directory
+  fs.readdir(process.cwd(), (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    // Send the list of file names as a JSON response
+    res.json({ files: files });
+  });
+});
+
+// const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
+// const swaggerDoc = yaml.parse(yamlfile)
+
+// app.use(
+//   "/api-docs",
+//   swaggerUI.serve,
+//   swaggerUI.setup(swaggerDoc)
+// )
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

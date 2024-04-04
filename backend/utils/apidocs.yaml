@@ -1,0 +1,136 @@
+openapi: 3.0.0
+info:
+  title: Law AI API
+  description: Backend service for Law AI.
+  version: 1.0.0
+
+paths:
+  /userData/{userID}:
+    get:
+      summary: Admin path to retrieve the queried user's profile data.
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          description: The ID of the user whose profile data is requested.
+          schema:
+            type: integer
+      responses:
+        '200': 
+          description: Successful deletion.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Access to user profile data was denied.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+    patch:
+      summary: Admin path to update the given user's profile data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successful update of user data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  user:
+                    $ref: '#/components/schemas/User'
+        '403':
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    delete:
+      summary: Admin path to delete a user.
+      parameters:
+        - name: userID
+          in: path
+          required: true
+          description: The ID of the user to be deleted.
+          schema:
+            type: integer
+      responses:
+        '200': 
+          description: User object containing user profile data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '403':
+          description: Deletion denied.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        password:
+          type: string
+        isAdmin:
+          type: boolean
+        apiCalls:
+          type: integer
+        createdAt:
+          type: string
