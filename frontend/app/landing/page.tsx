@@ -9,7 +9,7 @@ import { ApiUsage } from '@/models/ApiUsage';
 import {fetchApiUsage} from '@/utils/fetchApiUsage'
 import { strings } from '@/lang/en/userfacingstrings';
 
-export default function loggedin_landing() {
+export default function Landing() {
     const [data, setData] = useState<AuthData | null>(null);
     const [apiUsage, setapiUsage] = useState<ApiUsage | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
