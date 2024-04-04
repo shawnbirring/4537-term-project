@@ -335,7 +335,7 @@ app.get('/files', (req, res) => {
     }
 
     // Send the list of file names as a JSON response
-    res.json({ files: files, dir: dir, pathname: pathname });
+    res.json({ files: files});
   });
 });
 
@@ -348,7 +348,7 @@ app.get('/backendfiles', (req, res) => {
     }
 
     // Send the list of file names as a JSON response
-    res.json({ files: files, dir: dir, pathname: pathname });
+    res.json({ files: files});
   });
 });
 
