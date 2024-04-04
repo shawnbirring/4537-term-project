@@ -339,6 +339,19 @@ app.get('/files', (req, res) => {
   });
 });
 
+app.get('/backendfiles', (req, res) => {
+  // Read the contents of the directory
+  fs.readdir('./backend', (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    // Send the list of file names as a JSON response
+    res.json({ files: files, dir: dir, pathname: pathname });
+  });
+});
+
 try {
   const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
   const swaggerDoc = yaml.parse(yamlfile)
