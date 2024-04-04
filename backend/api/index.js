@@ -346,7 +346,7 @@ try {
   app.use(
     "/api-docs",
     swaggerUI.serve,
-    swaggerUI.setup(swaggerDoc, {customCssUrl: CSS_URL})) 
+    swaggerUI.setup(swaggerDoc)) 
   } catch (e) {
     console.log(e)
   }
