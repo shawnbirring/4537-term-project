@@ -9,6 +9,7 @@ const { TextGenerationPipeline } = require("../model/TextGenerationPipeline");
 require("dotenv").config();
 const swagger = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
+const path = require('path')
 // const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
 
 const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
@@ -325,11 +326,17 @@ const options = {
 };
 
 const specs = swagger(options)
-app.use(
-  "/api-docs",
-  swaggerUI.serve,
-  swaggerUI.setup(specs,  { customCssUrl: CSS_URL })
-)
+// app.use(
+//   "/api-docs",
+//   swaggerUI.serve,
+//   swaggerUI.setup(specs,  { customCssUrl: CSS_URL })
+// )
+
+// Serve Swagger UI assets explicitly
+app.use('/swagger-ui', express.static(path.join(__dirname, 'node_modules', 'swagger-ui-dist')));
+
+// Adjust your Swagger UI setup to use the explicitly served assets
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs, { swaggerOptions: { url: '/swagger-ui/swagger-ui-bundle.js' } }));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
