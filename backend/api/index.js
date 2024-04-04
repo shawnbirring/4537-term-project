@@ -326,7 +326,10 @@ const options = {
   }
 };
 
-const yamlfile = fs.readFileSync('./apidocs.yaml', 'utf-8')
+fs.readdir('./', (e, f) => {
+  console.log(f)
+})
+const yamlfile = fs.readFileSync('./api/apidocs.yaml', 'utf-8')
 const swaggerDoc = yaml.parse(yamlfile)
 
 app.use(
