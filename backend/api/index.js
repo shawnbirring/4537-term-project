@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const { TextGenerationPipeline } = require("../model/TextGenerationPipeline");
 require("dotenv").config();
+const swagger = require('swagger-jsdoc')
+const swaggerUI = require('swagger-ui-express')
 // const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
 
 const prisma = new PrismaClient();
@@ -301,6 +303,32 @@ app.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out" });
 });
+
+
+const options = {
+  definition: {
+    openapi: "3.1.0",
+    info: {
+      title: "Law AI",
+      version: "1.0",
+      description:
+        "API that supports the Law AI application.",
+    },
+    servers: [
+      {
+        url: process.env.DOMAIN,
+      },
+    ],
+  },
+  apis: ["./routes/*.yaml"],
+};
+
+const specs = swagger(options)
+app.use(
+  "/api-docs",
+  swaggerUI.serve,
+  swaggerUI.setup(specs)
+)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
