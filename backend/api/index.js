@@ -326,18 +326,18 @@ const options = {
   }
 };
 
-// app.get('/files', (req, res) => {
-//   // Read the contents of the directory
-//   fs.readdir('./backend/utils', (err, files) => {
-//     if (err) {
-//       console.error('Error reading directory:', err);
-//       return res.status(500).send('Internal Server Error');
-//     }
+app.get('/files', (req, res) => {
+  // Read the contents of the directory
+  fs.readdir('./backend/utils', (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return res.status(500).send('Internal Server Error');
+    }
 
-//     // Send the list of file names as a JSON response
-//     res.json({ files: files, dir: dir, pathname: pathname });
-//   });
-// });
+    // Send the list of file names as a JSON response
+    res.json({ files: files, dir: dir, pathname: pathname });
+  });
+});
 
 try {
   const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
@@ -346,7 +346,7 @@ try {
   app.use(
     "/api-docs",
     swaggerUI.serve,
-    swaggerUI.setup(swaggerDoc)) 
+    swaggerUI.setup(swaggerDoc, {customCssUrl: CSS_URL})) 
   } catch (e) {
     console.log(e)
   }
