@@ -330,7 +330,7 @@ app.get('/files', (req, res) => {
   // Read the contents of the directory
   const dir = path.resolve(process.cwd(), "utils")
   const pathname = path.join(dir, "apidocs.yaml")
-  fs.readdir((dir, "utils"), (err, files) => {
+  fs.readdir(dir, (err, files) => {
     if (err) {
       console.error('Error reading directory:', err);
       return res.status(500).send('Internal Server Error');
