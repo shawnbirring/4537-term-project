@@ -11,6 +11,7 @@ const swagger = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
 // const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
 
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 const prisma = new PrismaClient();
 const app = express();
 
@@ -327,7 +328,7 @@ const specs = swagger(options)
 app.use(
   "/api-docs",
   swaggerUI.serve,
-  swaggerUI.setup(specs)
+  swaggerUI.setup(specs,  { customCssUrl: CSS_URL })
 )
 
 const PORT = process.env.PORT || 3000;
