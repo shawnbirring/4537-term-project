@@ -11,6 +11,7 @@ const swagger = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
 const yaml = require('yaml')
 const fs = require('fs')
+const path = require('path')
 // const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
 
 const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
@@ -356,27 +357,48 @@ const options = {
   }
 };
 
+
+
 app.get('/files', (req, res) => {
   // Read the contents of the directory
-  fs.readdir(process.cwd(), (err, files) => {
+  fs.readdir('./backend/utils', (err, files) => {
     if (err) {
       console.error('Error reading directory:', err);
       return res.status(500).send('Internal Server Error');
     }
 
     // Send the list of file names as a JSON response
-    res.json({ files: files });
+    res.json({ files: files});
   });
 });
 
-// const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
-// const swaggerDoc = yaml.parse(yamlfile)
+app.get('/backendfiles', (req, res) => {
+  // Read the contents of the directory
+  fs.readdir('./backend', (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return res.status(500).send('Internal Server Error');
+    }
 
-// app.use(
-//   "/api-docs",
-//   swaggerUI.serve,
-//   swaggerUI.setup(swaggerDoc)
-// )
+    // Send the list of file names as a JSON response
+    res.json({ files: files});
+  });
+});
+
+try {
+  const dir = path.resolve(process.cwd(), "utils")
+  const pathname = path.join(dir, "apidocs.yaml")
+  const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
+  const swaggerDoc = yaml.parse(yamlfile)
+
+  app.use(
+    "/api-docs",
+    swaggerUI.serve,
+    swaggerUI.setup(swaggerDoc, {customCssUrl: CSS_URL, customCss:
+      '.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }'})) 
+  } catch (e) {
+    console.log(e)
+  }
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
