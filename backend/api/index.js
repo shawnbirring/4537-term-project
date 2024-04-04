@@ -344,7 +344,7 @@ app.get('/files', (req, res) => {
 try {
   const dir = path.resolve(process.cwd(), "utils")
   const pathname = path.join(dir, "apidocs.yaml")
-  const yamlfile = fs.readFileSync(pathname, 'utf-8')
+  const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
   const swaggerDoc = yaml.parse(yamlfile)
 
   app.use(
