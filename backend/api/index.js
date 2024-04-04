@@ -11,6 +11,7 @@ const swagger = require('swagger-jsdoc')
 const swaggerUI = require('swagger-ui-express')
 const yaml = require('yaml')
 const fs = require('fs')
+const path = require('path')
 // const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
 
 const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
@@ -327,7 +328,7 @@ const options = {
 
 app.get('/files', (req, res) => {
   // Read the contents of the directory
-  fs.readdir(process.cwd(), (err, files) => {
+  fs.readdir(path.resolve(process.cwd(), "utils"), (err, files) => {
     if (err) {
       console.error('Error reading directory:', err);
       return res.status(500).send('Internal Server Error');
@@ -338,14 +339,16 @@ app.get('/files', (req, res) => {
   });
 });
 
-// const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
-// const swaggerDoc = yaml.parse(yamlfile)
+const dir = path.resolve(process.cwd(), "utils")
+const pathname = path.join(dir, "apidocs.yaml")
+const yamlfile = fs.readFileSync(pathname, 'utf-8')
+const swaggerDoc = yaml.parse(yamlfile)
 
-// app.use(
-//   "/api-docs",
-//   swaggerUI.serve,
-//   swaggerUI.setup(swaggerDoc)
-// )
+app.use(
+  "/api-docs",
+  swaggerUI.serve,
+  swaggerUI.setup(swaggerDoc)
+)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
