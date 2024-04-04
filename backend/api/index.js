@@ -328,27 +328,32 @@ const options = {
 
 app.get('/files', (req, res) => {
   // Read the contents of the directory
-  fs.readdir(path.resolve(process.cwd(), "utils"), (err, files) => {
+  const dir = path.resolve(process.cwd(), "utils")
+  const pathname = path.join(dir, "apidocs.yaml")
+  fs.readdir((dir, "utils"), (err, files) => {
     if (err) {
       console.error('Error reading directory:', err);
       return res.status(500).send('Internal Server Error');
     }
 
     // Send the list of file names as a JSON response
-    res.json({ files: files });
+    res.json({ files: files, dir: dir, pathname: pathname });
   });
 });
 
-const dir = path.resolve(process.cwd(), "utils")
-const pathname = path.join(dir, "apidocs.yaml")
-const yamlfile = fs.readFileSync(pathname, 'utf-8')
-const swaggerDoc = yaml.parse(yamlfile)
+try {
+  const dir = path.resolve(process.cwd(), "utils")
+  const pathname = path.join(dir, "apidocs.yaml")
+  const yamlfile = fs.readFileSync(pathname, 'utf-8')
+  const swaggerDoc = yaml.parse(yamlfile)
 
-app.use(
-  "/api-docs",
-  swaggerUI.serve,
-  swaggerUI.setup(swaggerDoc)
-)
+  app.use(
+    "/api-docs",
+    swaggerUI.serve,
+    swaggerUI.setup(swaggerDoc)) 
+  } catch (e) {
+    console.log(e)
+  }
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
