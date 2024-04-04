@@ -1,3 +1,9 @@
+openapi: 3.0.0
+info:
+  title: Law AI API
+  description: Backend service for Law AI.
+  version: 1.0.0
+
 paths:
   /userData/{userID}:
     get:
