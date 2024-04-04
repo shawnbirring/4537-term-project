@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import TypeAnimation from "@/components/TypeAnimation"
-import {title_AIInput} from '../lang/en/userfacingstrings'
+import {strings} from '../lang/en/userfacingstrings'
 
 const AIComponent = ({ initialState }: { initialState: number }) => {
     const [input, setInput] = useState('');
@@ -45,7 +45,7 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label htmlFor="aiInput" className="block text-gray-700 text-sm font-bold mb-2">
-                        {title_AIInput}
+                        {strings.loggedin_landing.AI_Input_heading}
                     </label>
                     <input
                         type="text"
@@ -59,19 +59,19 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
                     type="submit"
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
-                    Submit
+                    {strings.loggedin_landing.submit_button_description}
                 </button>} 
             </form>
             {response && (
                 <div className="mt-4">
-                    <h3 className="text-lg font-semibold">AI Response:</h3>
+                    <h3 className="text-lg font-semibold">{strings.loggedin_landing.AI_response_heading}</h3>
                     <TypeAnimation sequence={[response]} wrapper="p" />
                 </div>
             )}
 
             {loading && (
                 <div className="mt-4">
-                    <TypeAnimation className='text-lg font-semibold' sequence={["Loading..."]} wrapper="span" />
+                    <TypeAnimation className='text-lg font-semibold' sequence={[strings.loggedin_landing.loading_message]} wrapper="span" />
                 </div>
             )}  
 
@@ -81,7 +81,7 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
                 </div>
             )}
             <h3 className="mt-4 text-lg font-semibold">
-                Remaining API Calls:
+                {strings.loggedin_landing.remaining_api_calls}
                 <span
                     className={`${remainingCalls >= 10 && remainingCalls <= 20
                         ? "text-green-500"
