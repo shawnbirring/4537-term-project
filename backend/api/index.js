@@ -342,11 +342,11 @@ app.get('/files', (req, res) => {
 // const yamlfile = fs.readFileSync('./_apidocs.yaml', 'utf-8')
 // const swaggerDoc = yaml.parse(yamlfile)
 
-app.use(
-  "/api-docs",
-  swaggerUI.serve,
-  swaggerUI.setup(swaggerDoc)
-)
+// app.use(
+//   "/api-docs",
+//   swaggerUI.serve,
+//   swaggerUI.setup(swaggerDoc)
+// )
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
