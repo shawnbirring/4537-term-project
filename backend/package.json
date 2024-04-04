@@ -24,7 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "node-fetch": "^3.3.2",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0",
+    "swagger-ui-express": "^4.3.0",
     "yaml": "^2.4.1"
   },
   "devDependencies": {
