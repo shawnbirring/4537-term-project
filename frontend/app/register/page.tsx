@@ -2,6 +2,7 @@
 import { useState } from "react";
 import TypeAnimation from "@/components/TypeAnimation";
 import { useRouter } from 'next/navigation'
+import { strings } from "@/lang/en/userfacingstrings";
 
 export default function Register() {
     const [email, setEmail] = useState("");
@@ -14,12 +15,12 @@ export default function Register() {
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            setError("Please enter a valid email address.");
+            setError(strings.register.email_error_message);
             return;
         }
 
         if (password.length < 3) {
-            setError("Password must be at least 3 characters long.");
+            setError(strings.register.password_length_error_message);
             return;
         }
 
@@ -39,7 +40,7 @@ export default function Register() {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                setError("An error occurred. " + errorText);
+                setError(strings.register.error_occured_message + errorText);
                 return;
             }
 
@@ -47,7 +48,7 @@ export default function Register() {
 
         } catch (error) {
             console.error(error);
-            setError("An error occurred. Please try again.");
+            setError(strings.register.general_error_message);
         }
     };
 
@@ -55,7 +56,7 @@ export default function Register() {
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <TypeAnimation
                 className="text-5xl font-bold text-gray-800"
-                sequence={["Register, to be judged by AI..."]}
+                sequence={[strings.register.welcome_message]}
             />
             <form
                 onSubmit={handleSubmit}
@@ -70,7 +71,7 @@ export default function Register() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className="relative block w-64 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                    placeholder="Email address"
+                    placeholder={strings.register.email_address_form_placeholder}
                 />
                 <input
                     type="password"
@@ -79,7 +80,7 @@ export default function Register() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     className="relative block w-64 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                    placeholder="Password"
+                    placeholder={strings.register.password_form_placeholder}
                 />
                 {error && (
                     <p className="text-red-500 text-sm text-center">{error}</p>
@@ -88,7 +89,7 @@ export default function Register() {
                     type="submit"
                     className="group relative w-64 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                    Register
+                    {strings.register.register_button_label}
                 </button>
             </form>
         </div>

@@ -95,7 +95,30 @@ async function incrementApiUsage(requestType) {
   });
 }
 
+app.get("/apiUsage", JWTMiddleware, async (req, res) => {
+  incrementApiUsage("get")
+  try {
+    const isAdmin = await prisma.user.findFirst({
+      where: {
+        id: req.user.id,
+        isAdmin: true,
+      },
+    });
+    if (!isAdmin) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    const numofCalls = await prisma.apiUsage.findMany();
+    res.status(200).json(numofCalls);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: `An error occurred while accessing users: ${error}` });
+  }
+});
+
 app.post("/register", validateRegisterInput, async (req, res) => {
+  incrementApiUsage("post")
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -120,6 +143,7 @@ app.post("/register", validateRegisterInput, async (req, res) => {
 });
 
 app.post("/login", validateLoginInput, async (req, res) => {
+  incrementApiUsage("post")
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -145,6 +169,7 @@ app.post("/login", validateLoginInput, async (req, res) => {
 });
 
 app.post("/ai", JWTMiddleware, async (req, res) => {
+  incrementApiUsage("post")
   // const { codeBlock, programmingLanguage } = req.body;
   const { text } = req.body;
   try {
@@ -184,6 +209,7 @@ app.post("/ai", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/users", JWTMiddleware, async (req, res) => {
+  incrementApiUsage("get")
   try {
     const isAdmin = await prisma.user.findFirst({
       where: {
@@ -205,6 +231,7 @@ app.get("/users", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/auth/status", JWTMiddleware, async (req, res) => {
+  incrementApiUsage("get")
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
@@ -234,6 +261,7 @@ app.get("/auth/status", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/userData/:userID", JWTMiddleware, async (req, res) => {
+  incrementApiUsage("get")
   try {
     const admin = await prisma.user.findFirst({
       where: {
@@ -255,6 +283,7 @@ app.get("/userData/:userID", JWTMiddleware, async (req, res) => {
 });
 
 app.patch("/userData", JWTMiddleware, async (req, res) => {
+  incrementApiUsage("patch")
   try {
     const admin = await prisma.user.findFirst({
       where: {
@@ -283,6 +312,7 @@ app.patch("/userData", JWTMiddleware, async (req, res) => {
 });
 
 app.delete("/userData/:userID", JWTMiddleware, async (req, res) => {
+  incrementApiUsage("delete")
   try {
     const admin = await prisma.user.findFirst({
       where: {
@@ -304,6 +334,7 @@ app.delete("/userData/:userID", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
+  incrementApiUsage("get")
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out" });
 });
