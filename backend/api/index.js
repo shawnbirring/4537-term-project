@@ -326,9 +326,8 @@ const options = {
 };
 
 app.get('/files', (req, res) => {
-  // Get the current directory path
   // Read the contents of the directory
-  fs.readdir('./backend', (err, files) => {
+  fs.readdir(process.cwd(), (err, files) => {
     if (err) {
       console.error('Error reading directory:', err);
       return res.status(500).send('Internal Server Error');
