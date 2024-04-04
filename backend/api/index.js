@@ -325,9 +325,20 @@ const options = {
   }
 };
 
-fs.readdir('./', (e, f) => {
-  console.log(f)
-})
+app.get('/files', (req, res) => {
+  // Get the current directory path
+  // Read the contents of the directory
+  fs.readdir('./', (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    // Send the list of file names as a JSON response
+    res.json({ files: files });
+  });
+});
+
 const yamlfile = fs.readFileSync('./_apidocs.yaml', 'utf-8')
 const swaggerDoc = yaml.parse(yamlfile)
 
