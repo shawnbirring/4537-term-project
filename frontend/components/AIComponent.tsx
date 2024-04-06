@@ -1,14 +1,14 @@
 "use client";
 import { useState } from 'react';
 import TypeAnimation from "@/components/TypeAnimation"
-import {strings} from '../lang/en/userfacingstrings'
+import { strings } from '../lang/en/userfacingstrings'
 
 const AIComponent = ({ initialState }: { initialState: number }) => {
     const [input, setInput] = useState('');
     const [response, setResponse] = useState('');
     const [error, setError] = useState('');
     const [remainingCalls, setRemainingCalls] = useState(initialState);
-    const [loading, setLoading] = useState(false); 
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -37,6 +37,7 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
         } catch (error) {
             console.error("Fetching error:", error);
             setError('An error occurred while accessing the API.');
+            setLoading(false)
         }
     };
 
@@ -55,12 +56,12 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
                 </div>
-               {!loading && <button
+                {!loading && <button
                     type="submit"
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                     {strings.loggedin_landing.submit_button_description}
-                </button>} 
+                </button>}
             </form>
             {response && (
                 <div className="mt-4">
@@ -73,7 +74,7 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
                 <div className="mt-4">
                     <TypeAnimation className='text-lg font-semibold' sequence={[strings.loggedin_landing.loading_message]} wrapper="span" />
                 </div>
-            )}  
+            )}
 
             {error && (
                 <div className="mt-4 text-red-500">
