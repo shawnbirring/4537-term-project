@@ -95,7 +95,7 @@ async function incrementApiUsage(requestType) {
   });
 }
 
-app.get("/apiUsage", JWTMiddleware, async (req, res) => {
+app.get("/v1/apiUsage", JWTMiddleware, async (req, res) => {
   incrementApiUsage("get")
   try {
     const isAdmin = await prisma.user.findFirst({
@@ -117,7 +117,7 @@ app.get("/apiUsage", JWTMiddleware, async (req, res) => {
   }
 });
 
-app.post("/register", validateRegisterInput, async (req, res) => {
+app.post("/v1/register", validateRegisterInput, async (req, res) => {
   incrementApiUsage("post")
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -142,7 +142,7 @@ app.post("/register", validateRegisterInput, async (req, res) => {
   }
 });
 
-app.post("/login", validateLoginInput, async (req, res) => {
+app.post("/v1/login", validateLoginInput, async (req, res) => {
   incrementApiUsage("post")
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -168,7 +168,7 @@ app.post("/login", validateLoginInput, async (req, res) => {
   }
 });
 
-app.post("/ai", JWTMiddleware, async (req, res) => {
+app.post("/v1/ai", JWTMiddleware, async (req, res) => {
   incrementApiUsage("post")
   // const { codeBlock, programmingLanguage } = req.body;
   const { text } = req.body;
@@ -208,7 +208,7 @@ app.post("/ai", JWTMiddleware, async (req, res) => {
   }
 });
 
-app.get("/users", JWTMiddleware, async (req, res) => {
+app.get("/v1/users", JWTMiddleware, async (req, res) => {
   incrementApiUsage("get")
   try {
     const isAdmin = await prisma.user.findFirst({
@@ -230,7 +230,7 @@ app.get("/users", JWTMiddleware, async (req, res) => {
   }
 });
 
-app.get("/auth/status", JWTMiddleware, async (req, res) => {
+app.get("/v1/auth/status", JWTMiddleware, async (req, res) => {
   incrementApiUsage("get")
   try {
     const user = await prisma.user.findUnique({
@@ -260,7 +260,7 @@ app.get("/auth/status", JWTMiddleware, async (req, res) => {
   }
 });
 
-app.get("/userData/:userID", JWTMiddleware, async (req, res) => {
+app.get("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
   incrementApiUsage("get")
   try {
     const admin = await prisma.user.findFirst({
@@ -282,7 +282,7 @@ app.get("/userData/:userID", JWTMiddleware, async (req, res) => {
   }
 });
 
-app.patch("/userData", JWTMiddleware, async (req, res) => {
+app.patch("/v1/userData", JWTMiddleware, async (req, res) => {
   incrementApiUsage("patch")
   try {
     const admin = await prisma.user.findFirst({
@@ -311,7 +311,7 @@ app.patch("/userData", JWTMiddleware, async (req, res) => {
   }
 });
 
-app.delete("/userData/:userID", JWTMiddleware, async (req, res) => {
+app.delete("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
   incrementApiUsage("delete")
   try {
     const admin = await prisma.user.findFirst({
@@ -333,7 +333,7 @@ app.delete("/userData/:userID", JWTMiddleware, async (req, res) => {
   }
 });
 
-app.get("/logout", (req, res) => {
+app.get("/v1/logout", (req, res) => {
   incrementApiUsage("get")
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out" });
@@ -368,7 +368,7 @@ app.get('/files', (req, res) => {
     }
 
     // Send the list of file names as a JSON response
-    res.json({ files: files});
+    res.json({ files: files });
   });
 });
 
@@ -381,7 +381,7 @@ app.get('/backendfiles', (req, res) => {
     }
 
     // Send the list of file names as a JSON response
-    res.json({ files: files});
+    res.json({ files: files });
   });
 });
 
@@ -394,11 +394,13 @@ try {
   app.use(
     "/api-docs",
     swaggerUI.serve,
-    swaggerUI.setup(swaggerDoc, {customCssUrl: CSS_URL, customCss:
-      '.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }'})) 
-  } catch (e) {
-    console.log(e)
-  }
+    swaggerUI.setup(swaggerDoc, {
+      customCssUrl: CSS_URL, customCss:
+        '.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }'
+    }))
+} catch (e) {
+  console.log(e)
+}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
