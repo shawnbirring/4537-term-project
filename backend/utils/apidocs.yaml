@@ -117,6 +117,35 @@ paths:
                   error:
                     type: string
 
+  /v1/endpointUsage:
+    get:
+      summary: Admin path to retrieve the usage data for each endpoint.
+      responses:
+        '200': 
+          description: Successful retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Endpoint'
+        '403':
+          description: Access to endpoint data was denied.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
 components:
   schemas:
     User:
@@ -134,3 +163,15 @@ components:
           type: integer
         createdAt:
           type: string
+    Endpoint:
+      type: object
+      properties:
+        id:
+          type: integer
+        method:
+          type: string
+        endpointName:
+          type: string
+        numberofRequests:
+          type: integer
+
