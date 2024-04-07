@@ -1,34 +1,35 @@
 import TypeAnimation from '@/components/TypeAnimation';
 import AIComponent from '@/components/AIComponent';
 import { User } from '@/models/User';
-import { ApiUsage } from '@/models/ApiUsage';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { fetchUsers } from '@/utils/fetchUsers';
 
 
 import {strings} from '../lang/en/userfacingstrings'
-import { fetchApiUsage } from '@/utils/fetchApiUsage';
+
+import { fetchEndpointUsage } from '@/utils/fetchEndpoints';
+import { EndpointUsage } from '@/models/EndpointUsage';
 
 interface AdminComponentProps {
     initialUsers: User[];
     adminEmail: string;
     apiCalls: number;
-    intial_apiUsageData: any;
+    intial_endpointUsageData: any;
 }
 
-const AdminComponent: React.FC<AdminComponentProps> = ({ initialUsers, adminEmail, apiCalls, intial_apiUsageData }) => {
+const AdminComponent: React.FC<AdminComponentProps> = ({ initialUsers, adminEmail, apiCalls, intial_endpointUsageData }) => {
     const router = useRouter()
     const [users, setUsers] = useState<User[]>(initialUsers);
-    const [apiUsageStats, setapiUsageStats] = useState<ApiUsage[]>(intial_apiUsageData);
+    const [endpointUsageStats, setendpointUsageStats] = useState<EndpointUsage[]>(intial_endpointUsageData);
     const [usertable_loading, setusertable_Loading] = useState<boolean>(false);
-    const [apitable_loading, setapitable_loading] = useState<boolean>(false);
+    const [endpointtable_loading, setendpointtable_loading] = useState<boolean>(false);
 
-    const callFetchApiUsage = async () => {
-        setapitable_loading(true);
-        const data = await fetchApiUsage();
-        setapiUsageStats(data);
-        setapitable_loading(false);
+    const callFetchEndpointUsage = async () => {
+        setendpointtable_loading(true);
+        const data = await fetchEndpointUsage();
+        setendpointUsageStats(data);
+        setendpointtable_loading(false);
     };
 
     const callFetchUsers = async () => {
@@ -90,41 +91,39 @@ const AdminComponent: React.FC<AdminComponentProps> = ({ initialUsers, adminEmai
                 </div>
             </div>
     
-            <div className="flex flex-col mb-4 ml-3">
-               
-                <div className="flex items-center mt-4 mb-4">
-                    <h2 className="text-xl font-bold mr-4">{strings.loggedin_landing.apiUsage_heading}</h2>
-                    <button onClick={callFetchApiUsage} className="text-white bg-blue-500 hover:bg-blue-700 text-sm font-semibold py-2 px-4 rounded" disabled={apitable_loading}>{strings.loggedin_landing.refresh_button_description}</button>
-                </div>
-                <div className="api-table">
-                {apitable_loading ? <TypeAnimation sequence={[strings.loggedin_landing.loading_message]} wrapper="p" /> : <table className="min-w-full table-auto">
-                        <thead className="bg-gray-200">
-                            <tr>
-                                <th className="px-4 py-2">{strings.loggedin_landing.api_usage_table_heading_ID}</th>
-                                <th className="px-4 py-2">{strings.loggedin_landing.api_usage_table_heading_GET_requests}</th>
-                                <th className="px-4 py-2">{strings.loggedin_landing.api_usage_table_heading_POST_requests}</th>
-                                <th className="px-4 py-2">{strings.loggedin_landing.api_usage_table_heading_DELETE_requests}</th>
-                                <th className="px-4 py-2">{strings.loggedin_landing.api_usage_table_heading_PATCH_requests}</th>
-                                <th className="px-4 py-2">{strings.loggedin_landing.api_usage_table_heading_total_requests}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {apiUsageStats.map((apiUsageData) => (
     
-                                <tr
-                                    key={apiUsageData.id}>
-                                    <td className="border px-4 py-2">{apiUsageData.id}</td>
-                                    <td className="border px-4 py-2">{apiUsageData.getTotal}</td>
-                                    <td className="border px-4 py-2">{apiUsageData.postTotal}</td>
-                                    <td className="border px-4 py-2">{apiUsageData.deleteTotal}</td>
-                                    <td className="border px-4 py-2">{apiUsageData.patchTotal}</td>
-                                    <td className="border px-4 py-2">{apiUsageData.getTotal + + apiUsageData.postTotal + apiUsageData.patchTotal + apiUsageData.deleteTotal}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    }
+            <div className="flex flex-col mb-4 ml-3 items-center flex-grow">
+   
+                <div className="flex items-center mt-4 mb-4">
+                    <h2 className="text-xl font-bold mr-4">{strings.loggedin_landing.endpointUsage_heading}</h2>
+                    <button onClick={callFetchEndpointUsage} className="text-white bg-blue-500 hover:bg-blue-700 text-sm font-semibold py-2 px-4 rounded" disabled={endpointtable_loading}>{strings.loggedin_landing.refresh_button_description}</button>
                 </div>
+                <div className="endpoint-table w-full">
+                    {endpointtable_loading ? <TypeAnimation sequence={[strings.loggedin_landing.loading_message]} wrapper="p" /> : <table className="min-w-full table-auto">
+                            <thead className="bg-gray-200">
+                                <tr>
+                                    <th className="px-4 py-2">{strings.loggedin_landing.endpoint_usage_table_heading_ID}</th>
+                                    <th className="px-4 py-2">{strings.loggedin_landing.endpoint_usage_table_heading_Method}</th>
+                                    <th className="px-4 py-2">{strings.loggedin_landing.endpoint_usage_table_heading_Endpoint_name}</th>
+                                    <th className="px-4 py-2">{strings.loggedin_landing.endpoint_usage_table_heading_num_of_requests}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {endpointUsageStats.map((endpointUsageData) => (
+
+                                    <tr
+                                        key={endpointUsageData.id}>
+                                        <td className="border px-4 py-2">{endpointUsageData.id}</td>
+                                        <td className="border px-4 py-2">{endpointUsageData.method}</td>
+                                        <td className="border px-4 py-2">{endpointUsageData.endpointName}</td>
+                                        <td className="border px-4 py-2">{endpointUsageData.numberofRequests}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        }
+                </div>
+            
                 <div className="ai-container min-w-full mb-5">
                     <AIComponent initialState={apiCalls} />
                 </div>

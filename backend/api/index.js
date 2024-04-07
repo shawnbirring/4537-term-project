@@ -82,21 +82,35 @@ const JWTMiddleware = async (req, res, next) => {
   }
 };
 
-async function incrementApiUsage(requestType) {
-  const fieldToUpdate = `${requestType.toLowerCase()}Total`;
 
-  await prisma.apiUsage.update({
-    where: { id: 1 },
-    data: {
-      [fieldToUpdate]: {
-        increment: 1
+async function incrementEndpointUsage(requestType, endpointName) {
+  const fieldToUpdate = `numberofRequests`; // Make sure the field name is correct
+
+  try {
+    await prisma.endpointUsage.upsert({
+      where: { method_endpointName: {
+        method: requestType,
+        endpointName: endpointName
+      } },
+      update: {
+        [fieldToUpdate]: {
+          increment: 1
+        }
+      },
+      create: {
+        method: requestType,
+        endpointName: endpointName,
+        [fieldToUpdate]: 1 // Initial value when creating a new entry
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.error("Error incrementing endpoint usage:", error);
+    // Handle error
+  }
 }
 
-app.get("/v1/apiUsage", JWTMiddleware, async (req, res) => {
-  incrementApiUsage("get")
+app.get("/v1/endpointUsage", JWTMiddleware, async (req, res) => {
+  incrementEndpointUsage("GET", "/v1/endpointUsage")
   try {
     const isAdmin = await prisma.user.findFirst({
       where: {
@@ -107,8 +121,8 @@ app.get("/v1/apiUsage", JWTMiddleware, async (req, res) => {
     if (!isAdmin) {
       return res.status(403).json({ error: "Forbidden" });
     }
-    const numofCalls = await prisma.apiUsage.findMany();
-    res.status(200).json(numofCalls);
+    const endpoints = await prisma.endpointUsage.findMany();
+    res.status(200).json(endpoints);
   } catch (error) {
     console.error(error);
     res
@@ -118,7 +132,7 @@ app.get("/v1/apiUsage", JWTMiddleware, async (req, res) => {
 });
 
 app.post("/v1/register", validateRegisterInput, async (req, res) => {
-  incrementApiUsage("post")
+  incrementEndpointUsage("POST","/v1/register")
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -143,7 +157,7 @@ app.post("/v1/register", validateRegisterInput, async (req, res) => {
 });
 
 app.post("/v1/login", validateLoginInput, async (req, res) => {
-  incrementApiUsage("post")
+  incrementEndpointUsage("POST","/v1/login")
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -169,7 +183,7 @@ app.post("/v1/login", validateLoginInput, async (req, res) => {
 });
 
 app.post("/v1/ai", JWTMiddleware, async (req, res) => {
-  incrementApiUsage("post")
+  incrementEndpointUsage("POST","/v1/ai")
   // const { codeBlock, programmingLanguage } = req.body;
   const { text } = req.body;
   try {
@@ -209,7 +223,7 @@ app.post("/v1/ai", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/v1/users", JWTMiddleware, async (req, res) => {
-  incrementApiUsage("get")
+  incrementEndpointUsage("GET","/v1/users")
   try {
     const isAdmin = await prisma.user.findFirst({
       where: {
@@ -231,7 +245,7 @@ app.get("/v1/users", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/v1/auth/status", JWTMiddleware, async (req, res) => {
-  incrementApiUsage("get")
+  incrementEndpointUsage("GET","/v1/auth/status")
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
@@ -261,7 +275,7 @@ app.get("/v1/auth/status", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
-  incrementApiUsage("get")
+  incrementEndpointUsage("GET","/v1/userData/:userIDs")
   try {
     const admin = await prisma.user.findFirst({
       where: {
@@ -283,7 +297,7 @@ app.get("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
 });
 
 app.patch("/v1/userData", JWTMiddleware, async (req, res) => {
-  incrementApiUsage("patch")
+  incrementEndpointUsage("PATCH","/v1/userData")
   try {
     const admin = await prisma.user.findFirst({
       where: {
@@ -312,7 +326,7 @@ app.patch("/v1/userData", JWTMiddleware, async (req, res) => {
 });
 
 app.delete("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
-  incrementApiUsage("delete")
+  incrementEndpointUsage("DELETE","/v1/userData/:userID")
   try {
     const admin = await prisma.user.findFirst({
       where: {
@@ -334,7 +348,7 @@ app.delete("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/v1/logout", (req, res) => {
-  incrementApiUsage("get")
+  incrementEndpointUsage("GET","/v1/logout")
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out" });
 });

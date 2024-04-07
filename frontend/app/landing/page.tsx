@@ -5,21 +5,22 @@ import AdminComponent from '@/components/AdminContent';
 import UserComponent from '@/components/UserContent';
 import fetchAuthStatus from '@/utils/auth';
 import { AuthData } from '@/models/AuthData';
-import { ApiUsage } from '@/models/ApiUsage';
-import {fetchApiUsage} from '@/utils/fetchApiUsage'
+
 import { strings } from '@/lang/en/userfacingstrings';
+import { fetchEndpointUsage } from '@/utils/fetchEndpoints';
+import { EndpointUsage } from '@/models/EndpointUsage';
 
 export default function Landing() {
     const [data, setData] = useState<AuthData | null>(null);
-    const [apiUsage, setapiUsage] = useState<ApiUsage | null>(null);
+    const [endpointUsage, setapiUsage] = useState<EndpointUsage | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const router = useRouter();
 
     useEffect(() => {
         fetchAuthStatus().then(data => {
             setData(data);
-            fetchApiUsage().then((apicalldata:ApiUsage)  => {
-                setapiUsage(apicalldata)
+            fetchEndpointUsage().then((endpointdata:EndpointUsage)  => {
+                setapiUsage(endpointdata)
                 setIsLoading(false);
             })
            
@@ -38,13 +39,13 @@ export default function Landing() {
         return <main><p>{strings.loggedin_landing.authorization_error_message}</p></main>;
     }
 
-    if (data.role === 'admin' && apiUsage) {
+    if (data.role === 'admin' && endpointUsage) {
         return (
             <AdminComponent
                 initialUsers={data.adminData}
                 adminEmail={data.email}
                 apiCalls={data.apiCalls}
-                intial_apiUsageData={apiUsage}
+                intial_endpointUsageData={endpointUsage}
             />
         );
     } else if (data.role === 'user') {
