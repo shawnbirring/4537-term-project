@@ -46,14 +46,20 @@ export const strings = {
         AI_Input_heading: " AI Input",
         submit_button_description: "Submit",
         AI_response_heading: "AI Response:",
-        remaining_api_calls: "Remaining API Calls: ",
+        remaining_api_calls: "Remaining API Calls: ", 
         api_usage_table_heading_ID: "ID",
         apiUsage_heading: "API Usage",
         api_usage_table_heading_GET_requests: "Number of GET requests",
         api_usage_table_heading_POST_requests: "Number of POST requests",
         api_usage_table_heading_DELETE_requests: "Number of DELETE requests",
         api_usage_table_heading_PATCH_requests: "Number of PATCH requests",
-        api_usage_table_heading_total_requests: "Total Number of requests"
+        api_usage_table_heading_total_requests: "Total Number of requests",
+        endpointUsage_heading: "Endpoint Usage",
+        endpoint_usage_table_heading_ID: "ID",
+        endpoint_usage_table_heading_Method: "Method",
+        endpoint_usage_table_heading_Endpoint_name: "Endpoint name",
+        endpoint_usage_table_heading_num_of_requests: "Number of requests",
+
     },
     edit_user_details: {
         email_form_label: "Email:",
