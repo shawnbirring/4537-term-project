@@ -12,7 +12,7 @@ const swaggerUI = require('swagger-ui-express')
 const yaml = require('yaml')
 const fs = require('fs')
 const path = require('path')
-// const HUGGING_FACE_MODEL_TOKEN = process.env.HUGGING_FACE_MODEL_TOKEN;
+
 
 const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 const prisma = new PrismaClient();
@@ -45,11 +45,10 @@ const sendTokenResponse = (user, statusCode, res) => {
   const token = jwt.sign({ id: user.id }, JWT_KEY, { expiresIn: "1h" });
 
   const cookieOptions = {
-    expires: new Date(Date.now() + 3600000), // 1 hour
+    expires: new Date(Date.now() + 3600000),
     httpOnly: true,
     sameSite: "None",
     secure: true,
-    // domain: process.env.DOMAIN,
   };
 
   res.cookie("token", token, cookieOptions);
@@ -84,8 +83,7 @@ const JWTMiddleware = async (req, res, next) => {
 
 
 async function incrementEndpointUsage(requestType, endpointName) {
-  const fieldToUpdate = `numberofRequests`; // Make sure the field name is correct
-
+  const fieldToUpdate = `numberofRequests`;
   try {
     await prisma.endpointUsage.upsert({
       where: { method_endpointName: {
@@ -100,12 +98,11 @@ async function incrementEndpointUsage(requestType, endpointName) {
       create: {
         method: requestType,
         endpointName: endpointName,
-        [fieldToUpdate]: 1 // Initial value when creating a new entry
+        [fieldToUpdate]: 1 
       }
     });
   } catch (error) {
     console.error("Error incrementing endpoint usage:", error);
-    // Handle error
   }
 }
 
@@ -184,7 +181,6 @@ app.post("/v1/login", validateLoginInput, async (req, res) => {
 
 app.post("/v1/ai", JWTMiddleware, async (req, res) => {
   incrementEndpointUsage("POST","/v1/ai")
-  // const { codeBlock, programmingLanguage } = req.body;
   const { text } = req.body;
   try {
     const model = await TextGenerationPipeline.getInstance();
@@ -198,7 +194,6 @@ app.post("/v1/ai", JWTMiddleware, async (req, res) => {
     ];
     const prompt = model.tokenizer.apply_chat_template(messages, {
       tokenize: false,
-      // add_generation_prompt: true,
     });
     response = await model(prompt, {
       max_new_tokens: 128,
