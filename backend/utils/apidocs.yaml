@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 paths:
-  /userData/{userID}:
+  /v1/userData/{userID}:
     get:
       summary: Admin path to retrieve the queried user's profile data.
       parameters:
@@ -128,7 +128,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Endpoint'
         '403':
-          description: Access to endpoint data was denied.
+          description: Access to endpoint data was denied because not admin.
           content:
             application/json:
               schema:
@@ -145,6 +145,155 @@ paths:
                 properties:
                   error:
                     type: string
+
+  /v1/register:
+    post:
+      summary: path to register a user.
+      responses:
+        '201': 
+          description: Successful registration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: user data input invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+        '500':
+          description: Server error occurred while registering user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/login:
+    post:
+      summary: path to register a user.
+      responses:
+        '200': 
+          description: Successful login.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: user data input invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: user input invalid email or password.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: user not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error occurred while logging user in.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/users:
+     get:
+      summary: Admin path to retrieve the data for each user when user clicks refresh button.
+      responses:
+        '200': 
+          description: Successful retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: Access to user data was denied because not admin.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/auth/status:
+     get:
+      summary:  path to check status (admin or not) of the current user along with intial state of all usrs for user table that admins see.
+      responses:
+        '200': 
+          description: Successful retrieval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: user does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /v1/logout:
+    get:
+      summary:  path to log user out
+      responses:
+        '200': 
+          description: Successful retrieval.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
 
 components:
   schemas:
