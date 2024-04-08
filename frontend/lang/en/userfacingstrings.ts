@@ -46,7 +46,7 @@ export const strings = {
         AI_Input_heading: " AI Input",
         submit_button_description: "Submit",
         AI_response_heading: "AI Response:",
-        remaining_api_calls: "Remaining API Calls: ", 
+        remaining_api_calls: "Remaining API Calls: ",
         endpointUsage_heading: "Endpoint Usage",
         endpoint_usage_table_heading_ID: "ID",
         endpoint_usage_table_heading_Method: "Method",
@@ -64,3 +64,4 @@ export const strings = {
     }
 
 };
+
