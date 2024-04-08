@@ -2,3 +2,4 @@
 **/node_modules
 **package-lock.json
 /backend/.cache/Xenova/Qwen1.5-0.5B-Chat/onnx/
+/ai/models
