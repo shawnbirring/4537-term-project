@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+import os
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, pipeline, set_seed
 
@@ -26,6 +27,9 @@ def get_content_after(s1, s2):
 
 @app.route("/generate_text", methods=["POST"])
 def generate_text():
+    token = request.headers.get("Authorization").split()[1]
+    if token != os.getenv("BEARER_TOKEN"):
+        return Response("Not Authorized", status=401, mimetype="application/json")
 
     text = (
         request.json["prompt"]
@@ -34,7 +38,7 @@ def generate_text():
 
     generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
     set_seed(42)
-    outputs = generator(text, max_length=40, truncation=True, num_return_sequences=1)
+    outputs = generator(text, max_length=120, truncation=True, num_return_sequences=1)
 
     return jsonify(get_content_after(outputs[0]["generated_text"], text).strip())
     # return jsonify(get_content_after(outputs[0]["generated_text"], text))
