@@ -7,14 +7,15 @@ const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const { TextGenerationPipeline } = require("../model/TextGenerationPipeline");
 require("dotenv").config();
-const swagger = require('swagger-jsdoc')
-const swaggerUI = require('swagger-ui-express')
-const yaml = require('yaml')
-const fs = require('fs')
-const path = require('path')
+const swagger = require("swagger-jsdoc");
+const swaggerUI = require("swagger-ui-express");
+const yaml = require("yaml");
+const fs = require("fs");
+const path = require("path");
+const axios = require("axios");
 
-
-const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+const CSS_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 const prisma = new PrismaClient();
 const app = express();
 
@@ -81,25 +82,26 @@ const JWTMiddleware = async (req, res, next) => {
   }
 };
 
-
 async function incrementEndpointUsage(requestType, endpointName) {
   const fieldToUpdate = `numberofRequests`;
   try {
     await prisma.endpointUsage.upsert({
-      where: { method_endpointName: {
-        method: requestType,
-        endpointName: endpointName
-      } },
+      where: {
+        method_endpointName: {
+          method: requestType,
+          endpointName: endpointName,
+        },
+      },
       update: {
         [fieldToUpdate]: {
-          increment: 1
-        }
+          increment: 1,
+        },
       },
       create: {
         method: requestType,
         endpointName: endpointName,
-        [fieldToUpdate]: 1 
-      }
+        [fieldToUpdate]: 1,
+      },
     });
   } catch (error) {
     console.error("Error incrementing endpoint usage:", error);
@@ -107,7 +109,7 @@ async function incrementEndpointUsage(requestType, endpointName) {
 }
 
 app.get("/v1/endpointUsage", JWTMiddleware, async (req, res) => {
-  incrementEndpointUsage("GET", "/v1/endpointUsage")
+  incrementEndpointUsage("GET", "/v1/endpointUsage");
   try {
     const isAdmin = await prisma.user.findFirst({
       where: {
@@ -129,7 +131,7 @@ app.get("/v1/endpointUsage", JWTMiddleware, async (req, res) => {
 });
 
 app.post("/v1/register", validateRegisterInput, async (req, res) => {
-  incrementEndpointUsage("POST","/v1/register")
+  incrementEndpointUsage("POST", "/v1/register");
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -154,7 +156,7 @@ app.post("/v1/register", validateRegisterInput, async (req, res) => {
 });
 
 app.post("/v1/login", validateLoginInput, async (req, res) => {
-  incrementEndpointUsage("POST","/v1/login")
+  incrementEndpointUsage("POST", "/v1/login");
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -180,25 +182,11 @@ app.post("/v1/login", validateLoginInput, async (req, res) => {
 });
 
 app.post("/v1/ai", JWTMiddleware, async (req, res) => {
-  incrementEndpointUsage("POST","/v1/ai")
+  incrementEndpointUsage("POST", "/v1/ai");
   const { text } = req.body;
   try {
-    const model = await TextGenerationPipeline.getInstance();
-    const messages = [
-      {
-        role: "system",
-        content:
-          "You should act like a jury and say what a jury would say in the following situations",
-      },
-      { role: "user", content: text },
-    ];
-    const prompt = model.tokenizer.apply_chat_template(messages, {
-      tokenize: false,
-    });
-    response = await model(prompt, {
-      max_new_tokens: 128,
-      do_sample: false,
-      return_full_text: false,
+    const ai_response = await axios.post(process.env.AI_URL, {
+      prompt: text,
     });
     const updatedUser = await prisma.user.update({
       where: { id: req.user.id },
@@ -206,7 +194,7 @@ app.post("/v1/ai", JWTMiddleware, async (req, res) => {
     });
     res.status(200).json({
       message: "API response",
-      modelData: response,
+      modelData: ai_response.data,
       apiCalls: updatedUser.apiCalls,
     });
   } catch (error) {
@@ -218,7 +206,7 @@ app.post("/v1/ai", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/v1/users", JWTMiddleware, async (req, res) => {
-  incrementEndpointUsage("GET","/v1/users")
+  incrementEndpointUsage("GET", "/v1/users");
   try {
     const isAdmin = await prisma.user.findFirst({
       where: {
@@ -240,7 +228,7 @@ app.get("/v1/users", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/v1/auth/status", JWTMiddleware, async (req, res) => {
-  incrementEndpointUsage("GET","/v1/auth/status")
+  incrementEndpointUsage("GET", "/v1/auth/status");
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
@@ -270,7 +258,7 @@ app.get("/v1/auth/status", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
-  incrementEndpointUsage("GET","/v1/userData/:userIDs")
+  incrementEndpointUsage("GET", "/v1/userData/:userIDs");
   try {
     const admin = await prisma.user.findFirst({
       where: {
@@ -292,7 +280,7 @@ app.get("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
 });
 
 app.patch("/v1/userData", JWTMiddleware, async (req, res) => {
-  incrementEndpointUsage("PATCH","/v1/userData")
+  incrementEndpointUsage("PATCH", "/v1/userData");
   try {
     const admin = await prisma.user.findFirst({
       where: {
@@ -321,7 +309,7 @@ app.patch("/v1/userData", JWTMiddleware, async (req, res) => {
 });
 
 app.delete("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
-  incrementEndpointUsage("DELETE","/v1/userData/:userID")
+  incrementEndpointUsage("DELETE", "/v1/userData/:userID");
   try {
     const admin = await prisma.user.findFirst({
       where: {
@@ -343,11 +331,10 @@ app.delete("/v1/userData/:userID", JWTMiddleware, async (req, res) => {
 });
 
 app.get("/v1/logout", (req, res) => {
-  incrementEndpointUsage("GET","/v1/logout")
+  incrementEndpointUsage("GET", "/v1/logout");
   res.clearCookie("token");
   res.status(200).json({ message: "Logged out" });
 });
-
 
 const options = {
   definition: {
@@ -355,25 +342,22 @@ const options = {
     info: {
       title: "Law AI",
       version: "1.0",
-      description:
-        "API that supports the Law AI application.",
+      description: "API that supports the Law AI application.",
     },
     servers: [
       {
         url: process.env.DOMAIN,
       },
     ],
-  }
+  },
 };
 
-
-
-app.get('/files', (req, res) => {
+app.get("/files", (req, res) => {
   // Read the contents of the directory
-  fs.readdir('./backend/utils', (err, files) => {
+  fs.readdir("./utils", (err, files) => {
     if (err) {
-      console.error('Error reading directory:', err);
-      return res.status(500).send('Internal Server Error');
+      console.error("Error reading directory:", err);
+      return res.status(500).send("Internal Server Error");
     }
 
     // Send the list of file names as a JSON response
@@ -381,12 +365,12 @@ app.get('/files', (req, res) => {
   });
 });
 
-app.get('/backendfiles', (req, res) => {
+app.get("/backendfiles", (req, res) => {
   // Read the contents of the directory
-  fs.readdir('./backend', (err, files) => {
+  fs.readdir("./", (err, files) => {
     if (err) {
-      console.error('Error reading directory:', err);
-      return res.status(500).send('Internal Server Error');
+      console.error("Error reading directory:", err);
+      return res.status(500).send("Internal Server Error");
     }
 
     // Send the list of file names as a JSON response
@@ -395,20 +379,22 @@ app.get('/backendfiles', (req, res) => {
 });
 
 try {
-  const dir = path.resolve(process.cwd(), "utils")
-  const pathname = path.join(dir, "apidocs.yaml")
-  const yamlfile = fs.readFileSync('./backend/utils/apidocs.yaml', 'utf-8')
-  const swaggerDoc = yaml.parse(yamlfile)
+  const dir = path.resolve(process.cwd(), "utils");
+  const pathname = path.join(dir, "apidocs.yaml");
+  const yamlfile = fs.readFileSync("./utils/apidocs.yaml", "utf-8");
+  const swaggerDoc = yaml.parse(yamlfile);
 
   app.use(
     "/api-docs",
     swaggerUI.serve,
     swaggerUI.setup(swaggerDoc, {
-      customCssUrl: CSS_URL, customCss:
-        '.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }'
-    }))
+      customCssUrl: CSS_URL,
+      customCss:
+        ".swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }",
+    })
+  );
 } catch (e) {
-  console.log(e)
+  console.log(e);
 }
 
 const PORT = process.env.PORT || 3000;
