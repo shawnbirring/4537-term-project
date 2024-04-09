@@ -31,7 +31,8 @@ const AIComponent = ({ initialState }: { initialState: number }) => {
             }
 
             const data = await res.json();
-            setResponse(data.modelData[0]["generated_text"]);
+            console.log(data);
+            setResponse(data.modelData);
             setRemainingCalls(data.apiCalls);
             setLoading(false)
         } catch (error) {
