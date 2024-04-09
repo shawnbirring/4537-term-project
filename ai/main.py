@@ -34,9 +34,9 @@ def generate_text():
 
     generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
     set_seed(42)
-    outputs = generator(text, max_length=1000, num_return_sequences=1)
+    outputs = generator(text, max_length=128, truncation=True, num_return_sequences=1)
 
-    return jsonify(outputs[0]["generated_text"])
+    return jsonify(get_content_after(outputs[0]["generated_text"], text).strip())
     # return jsonify(get_content_after(outputs[0]["generated_text"], text))
 
 
