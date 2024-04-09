@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, header } = require("express-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
@@ -185,9 +185,17 @@ app.post("/v1/ai", JWTMiddleware, async (req, res) => {
   incrementEndpointUsage("POST", "/v1/ai");
   const { text } = req.body;
   try {
-    const ai_response = await axios.post(process.env.AI_URL, {
-      prompt: text,
-    });
+    const ai_response = await axios.post(
+      process.env.AI_URL,
+      {
+        prompt: text,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.AI_BEARER_TOKEN}`,
+        },
+      }
+    );
     const updatedUser = await prisma.user.update({
       where: { id: req.user.id },
       data: { apiCalls: { decrement: 1 } },
